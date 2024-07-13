@@ -739,6 +739,7 @@ resource "aws_s3_object" "streamlit_assets" {
   key         = "${var.app_name}-assets.zip"
   source      = "${var.app_name}-assets.zip"
   source_hash = filemd5("${var.app_name}-assets.zip")
+  depends_on  = [aws_s3_bucket.streamlit_s3_bucket]
 }
 # Create S3 bucket to store CodePipeline Artifacts
 resource "aws_s3_bucket" "streamlit_codepipeline_artifacts" {
