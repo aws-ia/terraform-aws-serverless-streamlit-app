@@ -10,6 +10,16 @@
 - Configurable automated CloudFront Invalidations
 - Dynamic rollback to previous app versions via image tag
 
+## Architecture
+
+### Streamlit App Hosting
+
+![Streamlit App Hosting Arch](architecture/terraform-module-serverless-streamlit-app-hosting-arch.png)
+
+### Streamlit App Deployment Pipeline
+
+![Streamlit App Deployment Pipeline Arch](architecture/terraform-module-serverless-streamlit-app-deployment-pipeline-arch-with-key.png)
+
 ## Basic Usage - Simple deployment of sample Streamlit app with default configuration
 
 ### Important
