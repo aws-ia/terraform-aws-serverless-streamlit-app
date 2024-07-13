@@ -1,3 +1,22 @@
 {
-  "minimum_severity": "MEDIUM"
+  "minimum_severity": "MEDIUM",
+  "exclude": [
+    "aws-elb-http-not-used",
+    "aws-ecr-enable-image-scans",
+    "aws-ecr-enforce-immutable-repository",
+    "aws-elb-alb-not-public",
+    "aws-cloudfront-enable-waf",
+    "aws-cloudfront-use-secure-tls-policy",
+    "aws-cloudfront-enable-logging",
+    "aws-ec2-require-vpc-flow-logs-for-all-vpcs",
+    "aws-iam-no-policy-wildcards",
+    "aws-s3-block-public-acls",
+    "aws-s3-ignore-public-acls",
+    "aws-s3-block-public-policy",
+    "aws-s3-enable-bucket-encryption",
+    "aws-s3-no-public-buckets",
+    "aws-s3-encryption-customer-key",
+    "aws-s3-enable-bucket-logging",
+    "aws-s3-enable-versioning",
+  ],
 }

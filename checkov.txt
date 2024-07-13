@@ -1,0 +1,7 @@
+Running Checkov Analysis
+terraform scan results:
+
+Passed checks: 87, Failed checks: 0, Skipped checks: 0
+
+
+Success - Checkov found no issues!
