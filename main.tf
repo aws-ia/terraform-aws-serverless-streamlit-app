@@ -527,8 +527,14 @@ resource "null_resource" "streamlit_cloudfront_invalidation" {
 
   }
 
-  # Only create invalidation one new Docker image is built
-  depends_on = [aws_s3_object.streamlit_assets, aws_cloudfront_distribution.streamlit_distribution]
+  # Only create invalidation when new version of app is uploaded to S3
+  depends_on = [
+    # aws_s3_object.streamlit_assets,
+    # Temporary workaround until this GitHub issue on aws_s3_object is resolved: https://github.com/hashicorp/terraform-provider-aws/issues/12652
+    # data.aws_s3_object.streamlit_assets.key,
+    null_resource.put_s3_object,
+    aws_cloudfront_distribution.streamlit_distribution
+  ]
 }
 
 
@@ -734,11 +740,33 @@ resource "aws_s3_bucket_policy" "streamlit_s3_bucket" {
   policy = data.aws_iam_policy_document.streamlit_s3_bucket.json
 }
 # Push .zip file to S3 bucket
-resource "aws_s3_object" "streamlit_assets" {
-  bucket      = aws_s3_bucket.streamlit_s3_bucket.id
-  key         = "${var.app_name}-assets.zip"
-  source      = "${var.app_name}-assets.zip"
-  source_hash = filemd5("${var.app_name}-assets.zip")
+# resource "aws_s3_object" "streamlit_assets" {
+#   bucket      = aws_s3_bucket.streamlit_s3_bucket.id
+#   key         = "${var.app_name}-assets.zip"
+#   source      = "${var.app_name}-assets.zip"
+#   source_hash = filemd5("${var.app_name}-assets.zip")
+#   depends_on = [
+#     aws_s3_bucket.streamlit_s3_bucket,
+#     aws_s3_bucket_notification.streamlit_s3_bucket,
+#     aws_s3_bucket_policy.streamlit_s3_bucket,
+#     aws_s3_bucket_versioning.streamlit_s3_bucket
+#   ]
+# }
+
+# Temporary workaround until this GitHub issue on aws_s3_object is resolved: https://github.com/hashicorp/terraform-provider-aws/issues/12652
+resource "null_resource" "put_s3_object" {
+  # Will only trigger this resource to re-run if changes are made to the Dockerfile
+  triggers = {
+    src_hash = data.archive_file.streamlit_assets.output_sha
+  }
+
+  # Put .zip file for Streamlit App Assets in S3 Bucket
+  provisioner "local-exec" {
+    command = "aws s3 cp ${var.app_name}-assets.zip s3://${aws_s3_bucket.streamlit_s3_bucket.id}/${var.app_name}-assets.zip"
+
+  }
+
+  # Only attempt to put the file when the S3 Bucket (and related resources) are created
   depends_on = [
     aws_s3_bucket.streamlit_s3_bucket,
     aws_s3_bucket_notification.streamlit_s3_bucket,
@@ -876,8 +904,10 @@ resource "aws_codepipeline" "streamlit_codepipeline" {
       output_artifacts = ["source_output_artifacts"]
 
       configuration = {
-        S3Bucket             = aws_s3_bucket.streamlit_s3_bucket.id
-        S3ObjectKey          = aws_s3_object.streamlit_assets.key
+        S3Bucket = aws_s3_bucket.streamlit_s3_bucket.id
+        # S3ObjectKey          = aws_s3_object.streamlit_assets.key
+        # Temporary workaround until this GitHub issue on aws_s3_object is resolved: https://github.com/hashicorp/terraform-provider-aws/issues/12652
+        S3ObjectKey          = data.aws_s3_object.streamlit_assets.key
         PollForSourceChanges = false
       }
     }
@@ -901,7 +931,12 @@ resource "aws_codepipeline" "streamlit_codepipeline" {
     }
   }
 
-  depends_on = [aws_s3_object.streamlit_assets, aws_s3_bucket.streamlit_s3_bucket]
+  depends_on = [
+    # aws_s3_object.streamlit_assets,
+    aws_s3_bucket.streamlit_s3_bucket,
+    # Temporary workaround until this GitHub issue on aws_s3_object is resolved: https://github.com/hashicorp/terraform-provider-aws/issues/12652
+    null_resource.put_s3_object
+  ]
 }
 
 ################################################################################

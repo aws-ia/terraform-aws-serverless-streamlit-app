@@ -27,5 +27,9 @@ data "aws_s3_object" "streamlit_assets" {
   bucket = aws_s3_bucket.streamlit_s3_bucket.id
   key    = "${var.app_name}-assets.zip"
 
-  depends_on = [aws_s3_object.streamlit_assets]
+  depends_on = [
+    # aws_s3_object.streamlit_assets,
+    # Temporary workaround until this GitHub issue on aws_s3_object is resolved: https://github.com/hashicorp/terraform-provider-aws/issues/12652
+    null_resource.put_s3_object
+  ]
 }
