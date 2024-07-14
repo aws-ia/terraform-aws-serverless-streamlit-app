@@ -7,32 +7,6 @@ resource "random_string" "streamlit_s3_bucket" {
   special = false
   upper   = false
 }
-# resource "random_string" "streamlit_codepipeline" {
-#   length  = 4
-#   special = false
-#   upper   = false
-# }
-# resource "random_string" "streamlit_codebuild_project" {
-#   length  = 4
-#   special = false
-#   upper   = false
-# }
-# resource "random_string" "streamlit_eventbridge_event_bus" {
-#   length  = 4
-#   special = false
-#   upper   = false
-# }
-# resource "random_string" "eventbridge_invoke_streamlit_event_bus" {
-#   length  = 4
-#   special = false
-#   upper   = false
-# }
-# resource "random_string" "eventbridge_invoke_streamlit_codepipeline" {
-#   length  = 4
-#   special = false
-#   upper   = false
-# }
-
 
 ################################################################################
 # VPC
