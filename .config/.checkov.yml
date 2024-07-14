@@ -18,7 +18,6 @@ skip-check:
 - CKV2_AWS_12 # Ensure the default security group of every VPC restricts all traffic
 - CKV2_AWS_20 # Ensure that ALB redirects HTTP requests into HTTPS ones
 - CKV2_AWS_32 # Ensure CloudFront distribution has a response headers policy attached
-# - CKV_AWS_260 # Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
 - CKV_AWS_65 # Ensure container insights are enabled on ECS cluster
 - CKV_AWS_333 # Ensure ECS services do not have public IP addresses assigned to them automatically
 - CKV_AWS_158 # Ensure that CloudWatch Log Group is encrypted by KMS
@@ -35,10 +34,7 @@ skip-check:
 - CKV_AWS_174 # Verify CloudFront Distribution Viewer Certificate is using TLS v1.2
 - CKV_AWS_305 # Ensure CloudFront distribution has a default root object configured
 - CKV_AWS_219 # Ensure CodePipeline Artifact store is using a KMS CMK
-- CKV_AWS_314 # Ensure CodeBuild project environments have a logging configuration"
-- CKV_AWS_111 # Ensure IAM policies does not allow write access without constraints
-- CKV_AWS_109 # Ensure IAM policies does not allow permissions management / resource exposure without constraints
-- CKV_AWS_356 # Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions
+- CKV_AWS_314 # Ensure CodeBuild project environments have a logging configuration
 - CKV2_AWS_6 # Ensure that S3 bucket has a Public Access block
 - CKV2_AWS_61 # Ensure that an S3 bucket has a lifecycle configuration
 - CKV2_AWS_62 # Ensure S3 buckets should have event notifications enabled

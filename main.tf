@@ -1156,11 +1156,13 @@ resource "aws_iam_policy" "streamlit_codepipeline_policy" {
 
 # CodeBuild
 data "aws_iam_policy_document" "streamlit_codebuild_policy" {
+  #checkov:skip=CKV_AWS_111:Ensure IAM policies does not allow write access without constraints
+  #checkov:skip=CKV_AWS_109:Ensure IAM policies does not allow permissions management / resource exposure without constraints
+  #checkov:skip=CKV_AWS_356:Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions
   # S3 Allow
   statement {
     effect = "Allow"
     actions = [
-      # "s3:*",
       "s3:GetObject",
       "s3:GetObjectVersion",
       "s3:GetBucketVersioning",
@@ -1201,8 +1203,6 @@ data "aws_iam_policy_document" "streamlit_codebuild_policy" {
       "logs:PutLogEvents"
     ]
     resources = [
-      # aws_cloudwatch_log_group.streamlit_ecs_service_log_group.arn
-      # "arn:aws:logs:${data.aws_region.current.name}${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${var.app_name}-image-builder:log-stream:*"
       "*",
       "arn:aws:logs:${data.aws_region.current.name}${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${var.app_name}-image-builder:log-stream:*"
     ]
