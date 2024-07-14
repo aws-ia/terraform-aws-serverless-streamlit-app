@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-# AWS Serverless Streamlit App
+# AWS Serverless Streamlit App Terraform Module
 
 ## Features
 
