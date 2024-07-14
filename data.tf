@@ -30,6 +30,7 @@ data "aws_s3_object" "streamlit_assets" {
   depends_on = [
     # aws_s3_object.streamlit_assets,
     # Temporary workaround until this GitHub issue on aws_s3_object is resolved: https://github.com/hashicorp/terraform-provider-aws/issues/12652
-    null_resource.put_s3_object
+    null_resource.put_s3_object,
+    aws_s3_bucket.streamlit_s3_bucket
   ]
 }
