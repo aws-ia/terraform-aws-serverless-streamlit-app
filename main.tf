@@ -233,10 +233,11 @@ resource "aws_vpc_security_group_ingress_rule" "streamlit_ecs_sg_http_traffic" {
 
   security_group_id            = aws_security_group.streamlit_ecs_sg[0].id
   referenced_security_group_id = aws_security_group.streamlit_alb_sg[0].id
-  from_port                    = 80
-  to_port                      = 80
-  ip_protocol                  = "tcp"
-  description                  = "Allow inbound traffic from ALB Security Group on port 80 (HTTP)."
+  #checkov:skip=CKV_AWS_260:Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
+  from_port   = 80
+  to_port     = 80
+  ip_protocol = "tcp"
+  description = "Allow inbound traffic from ALB Security Group on port 80 (HTTP)."
 
   tags = {
     SecurityGroup = "${var.app_name}-ecs-sg"
@@ -304,11 +305,12 @@ resource "aws_vpc_security_group_ingress_rule" "streamlit_alb_sg_http_traffic" {
   count = var.create_ecs_security_group ? 1 : 0
 
   security_group_id = aws_security_group.streamlit_alb_sg[0].id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 80
-  to_port           = 80
-  ip_protocol       = "tcp"
-  description       = "Allow inbound traffic from Internet on port 80 (HTTP)."
+  #checkov:skip=CKV_AWS_260:Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 80
+  to_port     = 80
+  ip_protocol = "tcp"
+  description = "Allow inbound traffic from Internet on port 80 (HTTP)."
 
   tags = {
     SecurityGroup = "${var.app_name}-alb-sg"

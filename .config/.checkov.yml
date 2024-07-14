@@ -18,7 +18,7 @@ skip-check:
 - CKV2_AWS_12 # Ensure the default security group of every VPC restricts all traffic
 - CKV2_AWS_20 # Ensure that ALB redirects HTTP requests into HTTPS ones
 - CKV2_AWS_32 # Ensure CloudFront distribution has a response headers policy attached
-- CKV_AWS_260 # Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
+# - CKV_AWS_260 # Ensure no security groups allow ingress from 0.0.0.0:0 to port 80
 - CKV_AWS_65 # Ensure container insights are enabled on ECS cluster
 - CKV_AWS_333 # Ensure ECS services do not have public IP addresses assigned to them automatically
 - CKV_AWS_158 # Ensure that CloudWatch Log Group is encrypted by KMS
