@@ -1,0 +1,7 @@
+[client]
+showErrorDetails = false
+
+[theme]
+base = "dark"
+textColor = "white"
+

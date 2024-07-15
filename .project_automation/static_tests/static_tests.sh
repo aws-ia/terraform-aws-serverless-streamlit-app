@@ -32,7 +32,7 @@ else
     exit 1
 fi
 
-#********** tfsec *********************
+# #********** tfsec *********************
 echo 'Starting tfsec'
 MYTFSEC=$(tfsec . --config-file ${PROJECT_PATH}/.config/.tfsec.yml --custom-check-dir ${PROJECT_PATH}/.config/.tfsec)
 if [[ $MYTFSEC == *"No problems detected!"* ]];

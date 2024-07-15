@@ -1,0 +1,24 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      # Fetch the S3 object version id of the latest version of the app and store as environment variable
+      - echo Fetching the S3 object version id of the latest version of $APP_NAME...
+      - export LATEST_VERSION_ID=${data.aws_s3_object.streamlit_assets.version_id}
+      - echo $LATEST_VERSION_ID
+      # Log into Amazon ECR
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $IMAGE_REPO_URL
+  build:
+    commands:
+      # Build docker image using latest, app version and s3 object version id as tags
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_REPO_URL:latest -t $IMAGE_REPO_URL:$IMAGE_TAG -t $IMAGE_REPO_URL:$LATEST_VERSION_ID .
+      - echo Build completed on `date`
+  post_build:
+    commands:
+      # Push image with all tags to Amazon ECR
+      - echo Pushing the Docker image...
+      - docker push $IMAGE_REPO_URL --all-tags
+      - echo New image successfully pushed to ECR!

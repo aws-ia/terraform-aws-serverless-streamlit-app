@@ -1,0 +1,3 @@
+streamlit
+boto3
+langchain

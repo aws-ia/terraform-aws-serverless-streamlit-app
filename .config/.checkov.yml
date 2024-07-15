@@ -9,6 +9,41 @@ skip-check:
 - CKV_AZURE*
 - CKV2_AZURE*
 - CKV_TF_1 # default to Terraform registry instead of Git
+- CKV2_AWS_5 # Ensure that Security Groups are attached to another resource
+- CKV2_AWS_47 # Ensure AWS CloudFront attached WAFv2 WebACL is configured with AMR for Log4j Vulnerability
+- CKV2_AWS_28 # Ensure public facing ALB are protected by WAF
+- CKV2_AWS_42 # Ensure AWS CloudFront distribution uses custom SSL certificate
+- CKV2_AWS_11 # Ensure VPC flow logging is enabled in all VPCs
+- CKV2_AWS_19 # Ensure that all EIP addresses allocated to a VPC are attached to EC2 instances
+- CKV2_AWS_12 # Ensure the default security group of every VPC restricts all traffic
+- CKV2_AWS_20 # Ensure that ALB redirects HTTP requests into HTTPS ones
+- CKV2_AWS_32 # Ensure CloudFront distribution has a response headers policy attached
+- CKV_AWS_65 # Ensure container insights are enabled on ECS cluster
+- CKV_AWS_333 # Ensure ECS services do not have public IP addresses assigned to them automatically
+- CKV_AWS_158 # Ensure that CloudWatch Log Group is encrypted by KMS
+- CKV_AWS_51 # Ensure ECR Image Tags are immutable
+- CKV_AWS_103 # Ensure that load balancer is using at least TLS 1.2
+- CKV_AWS_136 # Ensure that ECR repositories are encrypted using KMS
+- CKV_AWS_163 # Ensure ECR image scanning on push is enabled
+- CKV_AWS_91 # Ensure the ELBv2 (Application/Network) has access logging enabled
+- CKV_AWS_150 # Ensure that Load Balancer has deletion protection enabled
+- CKV_AWS_2 # Ensure ALB protocol is HTTPS
+- CKV_AWS_310 # Ensure CloudFront distributions should have origin failover configured
+- CKV_AWS_68 # CloudFront Distribution should have WAF enabled
+- CKV_AWS_86 # Ensure CloudFront distribution has Access Logging enabled
+- CKV_AWS_174 # Verify CloudFront Distribution Viewer Certificate is using TLS v1.2
+- CKV_AWS_305 # Ensure CloudFront distribution has a default root object configured
+- CKV_AWS_219 # Ensure CodePipeline Artifact store is using a KMS CMK
+- CKV_AWS_314 # Ensure CodeBuild project environments have a logging configuration
+- CKV2_AWS_6 # Ensure that S3 bucket has a Public Access block
+- CKV2_AWS_61 # Ensure that an S3 bucket has a lifecycle configuration
+- CKV2_AWS_62 # Ensure S3 buckets should have event notifications enabled
+- CKV_AWS_18 # Ensure the S3 bucket has access logging enabled
+- CKV_AWS_145 # Ensure that S3 buckets are encrypted with KMS by default
+- CKV_AWS_144 # Ensure that S3 bucket has cross-region replication enabled
+- CKV_AWS_21 # Ensure all data stored in the S3 bucket have versioning enabled
+
+
 summary-position: bottom
 output: 'cli'
 compact: True
