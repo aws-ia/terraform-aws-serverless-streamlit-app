@@ -89,6 +89,7 @@ No modules.
 | [aws_cloudwatch_log_group.streamlit_ecs_service_log_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_codebuild_project.streamlit_codebuild_project](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
 | [aws_codepipeline.streamlit_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline) | resource |
+| [aws_ecr_lifecycle_policy.streamlit_ecr_repo](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_lifecycle_policy) | resource |
 | [aws_ecr_repository.streamlit_ecr_repo](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository) | resource |
 | [aws_ecs_cluster.streamlit_ecs_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster) | resource |
 | [aws_ecs_cluster_capacity_providers.streamlit_ecs_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster_capacity_providers) | resource |
@@ -109,6 +110,8 @@ No modules.
 | [aws_internet_gateway.streamlit_igw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
 | [aws_lb.streamlit_alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb) | resource |
 | [aws_lb_listener.http](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
+| [aws_lb_listener.https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
+| [aws_lb_listener_certificate.https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_certificate) | resource |
 | [aws_lb_listener_rule.deny_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_lb_listener_rule.redirect_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_lb_target_group.streamlit_tg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
@@ -162,6 +165,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_alb_listener_ssl_policy_https"></a> [alb\_listener\_ssl\_policy\_https](#input\_alb\_listener\_ssl\_policy\_https) | The SSL policy for the ALB HTTPS listener. The default uses the AWS security policy that enables TLS 1.3 with backwards compatibility with TLS 1.2. | `string` | `"ELBSecurityPolicy-TLS13-1-2-2021-06"` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The name of your application. This value is appended at the beginning of resource names. | `string` | `"streamlit"` | no |
 | <a name="input_app_version"></a> [app\_version](#input\_app\_version) | The version of the application. This is set to be used as the tag for the Docker image. Defaults to latest. Update this variable when making changes to your application to ensure you don't overwrite your previous image. Overwriting your previous image will prevent you from being able to roll back if you need. | `string` | `"v0.0.1"` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | The AWS region where the resources will be deployed. Default functionality is to use the region of your current AWS credentials. | `string` | `null` | no |
@@ -173,6 +177,7 @@ No modules.
 | <a name="input_create_ecs_default_policy"></a> [create\_ecs\_default\_policy](#input\_create\_ecs\_default\_policy) | Whether to create a default ECS policy for the cluster. | `bool` | `true` | no |
 | <a name="input_create_ecs_default_role"></a> [create\_ecs\_default\_role](#input\_create\_ecs\_default\_role) | Whether to create a default ECS role for the cluster. | `bool` | `true` | no |
 | <a name="input_create_ecs_security_group"></a> [create\_ecs\_security\_group](#input\_create\_ecs\_security\_group) | Whether to create default ECS security group. If this is set to false, you'll need to provide your own list of security group IDs to the `existing_ecs_security_groups` variable. | `bool` | `true` | no |
+| <a name="input_create_streamlit_ecr_repo_lifecycle_policy"></a> [create\_streamlit\_ecr\_repo\_lifecycle\_policy](#input\_create\_streamlit\_ecr\_repo\_lifecycle\_policy) | Conditional creation of ECR Lifecycle policy for the Streamlit ECR repo. Default is to not create any policy. | `bool` | `false` | no |
 | <a name="input_create_vpc_resources"></a> [create\_vpc\_resources](#input\_create\_vpc\_resources) | Whether to create VPC resources. If this is set to `false`, you must provide the relevant ids for your existing resources (e.g VPC, Subnets, Security Groups, etc.) | `bool` | `true` | no |
 | <a name="input_custom_header_name"></a> [custom\_header\_name](#input\_custom\_header\_name) | Name of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Any random string is fine. | `string` | `"X-Verify-Origin"` | no |
 | <a name="input_custom_header_value"></a> [custom\_header\_value](#input\_custom\_header\_value) | Value of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Any random string is fine. | `string` | `"streamlit-CloudFront-Distribution"` | no |
@@ -180,10 +185,15 @@ No modules.
 | <a name="input_ecs_cpu_architecture"></a> [ecs\_cpu\_architecture](#input\_ecs\_cpu\_architecture) | ECS CPU architecture (x86\_64 or arm64). Acceptable values are 'X86\_64' or 'ARM64' (case-sensistive). | `string` | `"ARM64"` | no |
 | <a name="input_ecs_operating_system_family"></a> [ecs\_operating\_system\_family](#input\_ecs\_operating\_system\_family) | Operating system family (windows or linux) for the ECS task (x86\_64 or arm64). Default is linux. Valid values are listed here: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_RuntimePlatform.html | `string` | `"LINUX"` | no |
 | <a name="input_ecs_task_desired_image_tag"></a> [ecs\_task\_desired\_image\_tag](#input\_ecs\_task\_desired\_image\_tag) | The desired tag of the image in ECR you wish to use for your ECS Task. If using multiple tags, you can use this to speficy a specific tag (e.g. `v0.0.1`) to use. Default value is to use the version id image tag. | `string` | `null` | no |
+| <a name="input_enable_alb_deletion_protection"></a> [enable\_alb\_deletion\_protection](#input\_enable\_alb\_deletion\_protection) | Whether to enable deletion protection for the Streamlit App Application Load Balancer. | `bool` | `false` | no |
+| <a name="input_enable_alb_http_listener"></a> [enable\_alb\_http\_listener](#input\_enable\_alb\_http\_listener) | Whether to create the ALB HTTP listener. | `bool` | `true` | no |
+| <a name="input_enable_alb_https_listener"></a> [enable\_alb\_https\_listener](#input\_enable\_alb\_https\_listener) | Whether to create the ALB HTTPS listener. | `bool` | `false` | no |
 | <a name="input_enable_auto_cloudfront_invalidation"></a> [enable\_auto\_cloudfront\_invalidation](#input\_enable\_auto\_cloudfront\_invalidation) | This variable conditionally enables CloudFront invalidations to automatically occur when there are updates to your Streamlit App. | `bool` | `true` | no |
 | <a name="input_enable_force_detach_policies"></a> [enable\_force\_detach\_policies](#input\_enable\_force\_detach\_policies) | Enable force detaching any policies from IAM roles. | `bool` | `true` | no |
+| <a name="input_enable_streamlit_ecr_repo_scan_on_push"></a> [enable\_streamlit\_ecr\_repo\_scan\_on\_push](#input\_enable\_streamlit\_ecr\_repo\_scan\_on\_push) | Whether to enable image scanning on push for ECR repo. This uses the Amazon Inspector service, which will incur additional cost. | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The application environment where the resources will be deployed. e.g. 'dev', 'prod', etc. | `string` | `"dev"` | no |
 | <a name="input_eventbridge_rules_enable_force_destroy"></a> [eventbridge\_rules\_enable\_force\_destroy](#input\_eventbridge\_rules\_enable\_force\_destroy) | Enable force destroy on all EventBridge rules. This allows the destruction of all events in the rule. | `bool` | `true` | no |
+| <a name="input_existing_alb_https_listener_cert"></a> [existing\_alb\_https\_listener\_cert](#input\_existing\_alb\_https\_listener\_cert) | The ARN of an existing ACM certificate to use for the ALB HTTPS listener. | `string` | `null` | no |
 | <a name="input_existing_alb_security_groups"></a> [existing\_alb\_security\_groups](#input\_existing\_alb\_security\_groups) | A list of existing security group IDs to attach to the Streamlit ECS service load balancer. | `list(string)` | `null` | no |
 | <a name="input_existing_alb_subnets"></a> [existing\_alb\_subnets](#input\_existing\_alb\_subnets) | A list of existing subnets to launch the ALB in. Public subnets are recommended. | `list(string)` | `null` | no |
 | <a name="input_existing_ecs_role"></a> [existing\_ecs\_role](#input\_existing\_ecs\_role) | The ARN of an existing ECS role to assign to the cluster. | `string` | `null` | no |
@@ -192,6 +202,11 @@ No modules.
 | <a name="input_path_to_app_dir"></a> [path\_to\_app\_dir](#input\_path\_to\_app\_dir) | The path to the directory that contains all assets for your Streamlit project. Any changes made to this directory will trigger the Docker image to be rebuilt and pushed to ECR during subsequent applies. | `string` | `null` | no |
 | <a name="input_path_to_build_spec"></a> [path\_to\_build\_spec](#input\_path\_to\_build\_spec) | The path to the build spec file for CodeBuild. This file should be a YAML file that defines the build process. | `string` | `null` | no |
 | <a name="input_streamlit_ecr_repo_enable_force_delete"></a> [streamlit\_ecr\_repo\_enable\_force\_delete](#input\_streamlit\_ecr\_repo\_enable\_force\_delete) | Enable force delete on the ECR repo. This allows the destruction of all images in the repository. | `bool` | `true` | no |
+| <a name="input_streamlit_ecr_repo_encryption_type"></a> [streamlit\_ecr\_repo\_encryption\_type](#input\_streamlit\_ecr\_repo\_encryption\_type) | The type of encryption for the ECR repo. Valid values are 'AES256' or 'KMS'. | `string` | `"AES256"` | no |
+| <a name="input_streamlit_ecr_repo_image_tag_mutability"></a> [streamlit\_ecr\_repo\_image\_tag\_mutability](#input\_streamlit\_ecr\_repo\_image\_tag\_mutability) | Whether to enforce images tags to be immutable or not. Valid values are 'MUTABLE' or IMMUTABLE'. | `string` | `"MUTABLE"` | no |
+| <a name="input_streamlit_ecr_repo_kms_key"></a> [streamlit\_ecr\_repo\_kms\_key](#input\_streamlit\_ecr\_repo\_kms\_key) | The KMS key ID used to encrypt the ECR repo. This is required if encryption\_type is 'KMS'. If not specified, the default AWS managed key for ECR is used. | `string` | `null` | no |
+| <a name="input_streamlit_ecr_repo_lifecycle_policy"></a> [streamlit\_ecr\_repo\_lifecycle\_policy](#input\_streamlit\_ecr\_repo\_lifecycle\_policy) | A JSON string containing the ECR Lifecycle policy for the Streamlit ECR repo. | `string` | `null` | no |
+| <a name="input_streamlit_ecs_service_log_group_kms_key"></a> [streamlit\_ecs\_service\_log\_group\_kms\_key](#input\_streamlit\_ecs\_service\_log\_group\_kms\_key) | The KMS key ID used to encrypt the log group for the ECS service. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources. | `map(any)` | <pre>{<br>  "IAC_PROVIDER": "Terraform"<br>}</pre> | no |
 | <a name="input_task_cpu"></a> [task\_cpu](#input\_task\_cpu) | The CPU resources (in CPU units) allocated to each task. Default is 256. | `number` | `256` | no |
 | <a name="input_task_memory"></a> [task\_memory](#input\_task\_memory) | The memory (in MiB) allocated to each task. Default is 512. | `number` | `512` | no |
