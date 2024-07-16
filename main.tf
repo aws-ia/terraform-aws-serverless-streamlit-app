@@ -360,11 +360,13 @@ resource "aws_lb" "streamlit_alb" {
   drop_invalid_header_fields = true
   subnets                    = var.existing_alb_subnets != null ? var.existing_alb_subnets : [aws_subnet.public_subnet1[0].id, aws_subnet.public_subnet2[0].id]
   security_groups            = var.existing_alb_security_groups != null ? var.existing_alb_security_groups : [aws_security_group.streamlit_alb_sg[0].id]
+  enable_deletion_protection = var.enable_alb_deletion_protection
 
   tags = {
     Name = "${var.app_name}-alb"
   }
 }
+
 
 # Configure target group for ALB
 resource "aws_lb_target_group" "streamlit_tg" {
@@ -381,16 +383,36 @@ resource "aws_lb_target_group" "streamlit_tg" {
     unhealthy_threshold = 3
   }
 
-  tags = {
-    Name = "${var.app_name}-tg"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.app_name}-tg"
+    }
+  )
 }
 
 # Create Listener for ALB
+# HTTP Listener
 resource "aws_lb_listener" "http" {
+  count             = var.enable_alb_http_listener ? 1 : 0
   load_balancer_arn = aws_lb.streamlit_alb[0].arn
   port              = 80
   protocol          = "HTTP"
+  # ssl_policy cannot be specified for HTTP listeners.
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.streamlit_tg.arn
+  }
+}
+# HTTPS Listener
+resource "aws_lb_listener" "https" {
+  count             = var.enable_alb_https_listener ? 1 : 0
+  load_balancer_arn = aws_lb.streamlit_alb[0].arn
+  port              = 443
+  protocol          = "HTTPS"
+  # Create load balancer policy that defaults to predefined AWS Policy 'ELBSecurityPolicy-TLS13-1-2-2021-06'. This policy includes TLS 1.3 and is backwards compatible with TLS 1.2.
+  ssl_policy = var.alb_listener_ssl_policy_https
 
   default_action {
     type             = "forward"
@@ -398,9 +420,16 @@ resource "aws_lb_listener" "http" {
   }
 }
 
+resource "aws_lb_listener_certificate" "https" {
+  count           = var.enable_alb_https_listener ? 1 : 0
+  listener_arn    = aws_lb_listener.https[0].arn
+  certificate_arn = var.existing_alb_https_listener_cert
+}
+
+
 # Create deny rule for ALB. This prevents users from accessing the ALB directly. Instead, they must go throught CloudFront.
 resource "aws_lb_listener_rule" "deny_rule" {
-  listener_arn = aws_lb_listener.http.arn
+  listener_arn = aws_lb_listener.http[0].arn
   priority     = 1
 
   action {
@@ -418,7 +447,7 @@ resource "aws_lb_listener_rule" "deny_rule" {
 
 # Create redirect rule for ALB where users must instead use CloudFront.
 resource "aws_lb_listener_rule" "redirect_rule" {
-  listener_arn = aws_lb_listener.http.arn
+  listener_arn = aws_lb_listener.http[0].arn
   priority     = 5
 
   action {
@@ -546,16 +575,19 @@ resource "aws_ecs_service" "streamlit_ecs_service" {
   network_configuration {
     subnets         = var.existing_ecs_subnets != null ? var.existing_ecs_subnets : [aws_subnet.private_subnet1[0].id, aws_subnet.private_subnet2[0].id]
     security_groups = var.existing_ecs_security_groups != null ? var.existing_ecs_security_groups : [aws_security_group.streamlit_ecs_sg[0].id]
-
-    assign_public_ip = true
-
   }
-
   load_balancer {
     target_group_arn = aws_lb_target_group.streamlit_tg.arn
     container_name   = "${var.app_name}-container"
     container_port   = var.container_port
   }
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.app_name}-ecs-service"
+    }
+  )
   # The Amazon ECS service requires an explicit dependency on the Application Load Balancer listener rule and the Application Load Balancer listener. This prevents the service from starting before the listener is ready.
   depends_on = [aws_lb_listener.http]
 }
@@ -564,6 +596,13 @@ resource "aws_ecs_service" "streamlit_ecs_service" {
 resource "aws_cloudwatch_log_group" "streamlit_ecs_service_log_group" {
   name              = "/ecs/${var.app_name}-ecs-log-group"
   retention_in_days = 365
+  kms_key_id        = var.streamlit_ecs_service_log_group_kms_key
+
+  tags = merge(var.tags,
+    {
+      Name = "/ecs/${var.app_name}-ecs-log-group"
+    }
+  )
 }
 
 # Create ECS Task
@@ -621,20 +660,29 @@ resource "aws_ecs_task_definition" "streamlit_ecs_task_definition" {
 ################################################################################
 # Create an ECR repository
 resource "aws_ecr_repository" "streamlit_ecr_repo" {
-  name = "${var.app_name}-repo"
-
+  name                 = "${var.app_name}-repo"
+  image_tag_mutability = var.streamlit_ecr_repo_image_tag_mutability
+  image_scanning_configuration {
+    scan_on_push = var.enable_streamlit_ecr_repo_scan_on_push
+  }
+  encryption_configuration {
+    encryption_type = var.streamlit_ecr_repo_encryption_type
+    kms_key         = var.streamlit_ecr_repo_kms_key
+  }
   # allow for reppo to be deleted even if it contains images
   force_delete = var.streamlit_ecr_repo_enable_force_delete
+  tags = {
+    Name = "${var.app_name}-repo"
+  }
 }
 
 # TODO - Consider adding support for ECR Lifecycle rules in future module verison
-# resource "aws_ecr_lifecycle_policy" "streamlit_ecr_repo" {
-#   count = var.create_streamlit_ecr_repo_lifecycle_rules ? 1: 0
-#   repository = aws_ecr_repository.streamlit_ecr_repo.name
+resource "aws_ecr_lifecycle_policy" "streamlit_ecr_repo" {
+  count      = var.create_streamlit_ecr_repo_lifecycle_policy ? 1 : 0
+  repository = aws_ecr_repository.streamlit_ecr_repo.name
+  policy     = var.streamlit_ecr_repo_lifecycle_policy
 
-#   policy = jsonencode({ "rules" : var.streamlit_ecr_repo_lifecycle_rules })
-
-# }
+}
 
 
 ################################################################################
