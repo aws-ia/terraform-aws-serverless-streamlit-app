@@ -66,6 +66,31 @@ variable "existing_ecs_subnets" {
   type        = list(string)
   default     = null
 }
+variable "enable_alb_deletion_protection" {
+  description = "Whether to enable deletion protection for the Streamlit App Application Load Balancer."
+  type        = bool
+  default     = false
+}
+variable "alb_listener_ssl_policy_https" {
+  description = "The SSL policy for the ALB HTTPS listener. The default uses the AWS security policy that enables TLS 1.3 with backwards compatibility with TLS 1.2."
+  type        = string
+  default     = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+}
+variable "enable_alb_http_listener" {
+  description = "Whether to create the ALB HTTP listener."
+  type        = bool
+  default     = true
+}
+variable "enable_alb_https_listener" {
+  description = "Whether to create the ALB HTTPS listener."
+  type        = bool
+  default     = false
+}
+variable "existing_alb_https_listener_cert" {
+  description = "The ARN of an existing ACM certificate to use for the ALB HTTPS listener."
+  type        = string
+  default     = null
+}
 
 # - CloudFront -
 variable "custom_header_name" {
@@ -130,6 +155,38 @@ variable "streamlit_ecr_repo_enable_force_delete" {
   description = "Enable force delete on the ECR repo. This allows the destruction of all images in the repository."
   type        = bool
   default     = true
+}
+
+variable "streamlit_ecr_repo_image_tag_mutability" {
+  description = "Whether to enforce images tags to be immutable or not. Valid values are 'MUTABLE' or IMMUTABLE'."
+  type        = string
+  default     = "MUTABLE"
+}
+variable "enable_streamlit_ecr_repo_scan_on_push" {
+  description = "Whether to enable image scanning on push for ECR repo. This uses the Amazon Inspector service, which will incur additional cost."
+  type        = bool
+  default     = false
+}
+variable "streamlit_ecr_repo_encryption_type" {
+  description = "The type of encryption for the ECR repo. Valid values are 'AES256' or 'KMS'."
+  type        = string
+  default     = "AES256"
+}
+variable "streamlit_ecr_repo_kms_key" {
+  description = "The KMS key ID used to encrypt the ECR repo. This is required if encryption_type is 'KMS'. If not specified, the default AWS managed key for ECR is used."
+  type        = string
+  default     = null
+}
+
+variable "create_streamlit_ecr_repo_lifecycle_policy" {
+  description = "Conditional creation of ECR Lifecycle policy for the Streamlit ECR repo. Default is to not create any policy."
+  type        = bool
+  default     = false
+}
+variable "streamlit_ecr_repo_lifecycle_policy" {
+  description = "A JSON string containing the ECR Lifecycle policy for the Streamlit ECR repo."
+  type        = string
+  default     = null
 }
 # TODO - Consider adding support for ECR Lifecycle rules in future module verison
 
@@ -224,6 +281,13 @@ variable "existing_ecs_role" {
   default     = null
 }
 
+
+# - CloudWatch -
+variable "streamlit_ecs_service_log_group_kms_key" {
+  description = "The KMS key ID used to encrypt the log group for the ECS service."
+  type        = string
+  default     = null
+}
 
 # - Tags -
 variable "tags" {
