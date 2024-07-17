@@ -36,6 +36,11 @@ variable "create_vpc_resources" {
   type        = bool
   default     = true
 }
+variable "existing_vpc_id" {
+  description = "The existing VPC ID."
+  type        = string
+  default     = true
+}
 variable "existing_alb_security_groups" {
   type        = list(string)
   description = "A list of existing security group IDs to attach to the Streamlit ECS service load balancer."
@@ -89,6 +94,16 @@ variable "enable_alb_https_listener" {
 variable "existing_alb_https_listener_cert" {
   description = "The ARN of an existing ACM certificate to use for the ALB HTTPS listener."
   type        = string
+  default     = null
+}
+variable "existing_route_table_public" {
+  description = "A list of existing public route tables."
+  type        = list(string)
+  default     = null
+}
+variable "existing_route_table_private" {
+  description = "A list of existing pricate route tables."
+  type        = list(string)
   default     = null
 }
 
@@ -256,22 +271,9 @@ variable "codebuild_image_type" {
 }
 
 
-
-
-
 # - IAM -
 variable "enable_force_detach_policies" {
   description = "Enable force detaching any policies from IAM roles."
-  type        = bool
-  default     = true
-}
-variable "create_ecs_default_role" {
-  description = "Whether to create a default ECS role for the cluster."
-  type        = bool
-  default     = true
-}
-variable "create_ecs_default_policy" {
-  description = "Whether to create a default ECS policy for the cluster."
   type        = bool
   default     = true
 }
