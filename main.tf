@@ -32,7 +32,7 @@ resource "aws_vpc" "streamlit_vpc" {
 resource "aws_subnet" "public_subnet1" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
+  vpc_id            = aws_vpc.streamlit_vpc[0].id 
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 0)
   availability_zone = data.aws_availability_zones.available.names[0] # first az
 
@@ -46,7 +46,7 @@ resource "aws_subnet" "public_subnet1" {
 resource "aws_subnet" "public_subnet2" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
+  vpc_id            = aws_vpc.streamlit_vpc[0].id 
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 1)
   availability_zone = data.aws_availability_zones.available.names[1] # second az
 
@@ -61,7 +61,7 @@ resource "aws_subnet" "public_subnet2" {
 resource "aws_subnet" "private_subnet1" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
+  vpc_id            = aws_vpc.streamlit_vpc[0].id 
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 2)
   availability_zone = data.aws_availability_zones.available.names[0] # first az
 
@@ -75,7 +75,7 @@ resource "aws_subnet" "private_subnet1" {
 resource "aws_subnet" "private_subnet2" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
+  vpc_id            = aws_vpc.streamlit_vpc[0].id 
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 3)
   availability_zone = data.aws_availability_zones.available.names[1] # second az
 
@@ -91,7 +91,7 @@ resource "aws_subnet" "private_subnet2" {
 resource "aws_internet_gateway" "streamlit_igw" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
+  vpc_id = aws_vpc.streamlit_vpc[0].id 
 
   tags = merge(
     var.tags,
@@ -106,7 +106,7 @@ resource "aws_nat_gateway" "streamlit_ngw" {
   count = var.create_vpc_resources ? 1 : 0
 
   allocation_id = aws_eip.streamlit_eip[0].id
-  subnet_id     = var.existing_alb_subnets != null ? var.existing_alb_subnets[0] : aws_subnet.public_subnet1[0].id
+  subnet_id     = aws_subnet.public_subnet1[0].id 
 
   tags = merge(
     var.tags,
@@ -136,7 +136,7 @@ resource "aws_eip" "streamlit_eip" {
 resource "aws_route_table" "streamlit_route_table_public" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
+  vpc_id = aws_vpc.streamlit_vpc[0].id 
 
   # Create route to IGW for all traffic that is not destined for local
   # NOTE: Most specific route wins, so traffic destined for '10.0.0.0/16' is routed locally. All other traffic ('0.0.0.0/0') is routed to IGW.
@@ -157,7 +157,7 @@ resource "aws_route_table" "streamlit_route_table_public" {
 resource "aws_route_table" "streamlit_route_table_private" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
+  vpc_id = aws_vpc.streamlit_vpc[0].id
 
   # Create route to NAT GW for all traffic that is not destined for local
   # NOTE: Most specific route wins, so traffic destined for '10.0.0.0/16' is routed locally. All other traffic ('0.0.0.0/0') is routed to IGW.
@@ -178,22 +178,27 @@ resource "aws_route_table" "streamlit_route_table_private" {
 resource "aws_route_table_association" "public_subnet1_association" {
   count = var.create_vpc_resources ? 1 : 0
 
-  subnet_id      = var.existing_alb_subnets != null ? var.existing_alb_subnets[0] : aws_subnet.public_subnet1[0].id
-  route_table_id = var.existing_route_table_public != null ? var.existing_route_table_public[0] : aws_route_table.streamlit_route_table_public[0].id
+  subnet_id      = aws_subnet.public_subnet1[0].id 
+  route_table_id = aws_route_table.streamlit_route_table_public[0].id 
 }
 resource "aws_route_table_association" "public_subnet2_association" {
-  subnet_id      = var.existing_alb_subnets != null ? var.existing_alb_subnets[1] : aws_subnet.public_subnet2[0].id
-  route_table_id = var.existing_route_table_public != null ? var.existing_route_table_public[0] : aws_route_table.streamlit_route_table_public[0].id
+  count = var.create_vpc_resources ? 1 : 0
+  subnet_id      =  aws_subnet.public_subnet2[0].id 
+  route_table_id =  aws_route_table.streamlit_route_table_public[0].id 
 }
 
 # Associate the private subnets with the route table and NAT Gateway
 resource "aws_route_table_association" "private_subnet1_association" {
-  subnet_id      = var.existing_ecs_subnets != null ? var.existing_ecs_subnets[0] : aws_subnet.private_subnet1[0].id
-  route_table_id = var.existing_route_table_private != null ? var.existing_route_table_private[0] : aws_route_table.streamlit_route_table_private[0].id
+  count = var.create_vpc_resources ? 1 : 0
+
+  subnet_id      = aws_subnet.private_subnet1[0].id 
+  route_table_id = aws_route_table.streamlit_route_table_private[0].id 
 }
 resource "aws_route_table_association" "private_subnet2_association" {
-  subnet_id      = var.existing_ecs_subnets != null ? var.existing_ecs_subnets[1] : aws_subnet.private_subnet2[0].id
-  route_table_id = var.existing_route_table_private != null ? var.existing_route_table_private[0] : aws_route_table.streamlit_route_table_private[0].id
+  count = var.create_vpc_resources ? 1 : 0
+
+  subnet_id      = aws_subnet.private_subnet2[0].id 
+  route_table_id = aws_route_table.streamlit_route_table_private[0].id 
 }
 
 
@@ -205,7 +210,7 @@ resource "aws_security_group" "streamlit_ecs_sg" {
   count = var.create_ecs_security_group ? 1 : 0
 
   name        = "${var.app_name}-ecs-sg"
-  vpc_id      = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
+  vpc_id      = aws_vpc.streamlit_vpc[0].id 
   description = "Security group for Streamlit ECS container."
 
   tags = {
@@ -278,7 +283,7 @@ resource "aws_security_group" "streamlit_alb_sg" {
   count = var.create_alb_security_group ? 1 : 0
 
   name        = "${var.app_name}-alb-sg"
-  vpc_id      = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
+  vpc_id      = aws_vpc.streamlit_vpc[0].id 
   description = "Security group for Streamlit ALB."
 
   tags = {

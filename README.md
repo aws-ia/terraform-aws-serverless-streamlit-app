@@ -197,8 +197,6 @@ No modules.
 | <a name="input_existing_ecs_role"></a> [existing\_ecs\_role](#input\_existing\_ecs\_role) | The ARN of an existing ECS role to assign to the cluster. | `string` | `null` | no |
 | <a name="input_existing_ecs_security_groups"></a> [existing\_ecs\_security\_groups](#input\_existing\_ecs\_security\_groups) | A list of existing security group IDs to attach to the Streamlit ECS service. | `list(string)` | `null` | no |
 | <a name="input_existing_ecs_subnets"></a> [existing\_ecs\_subnets](#input\_existing\_ecs\_subnets) | A list of existing subnets to launch the ECS service in. Private subnets are recommended. | `list(string)` | `null` | no |
-| <a name="input_existing_route_table_private"></a> [existing\_route\_table\_private](#input\_existing\_route\_table\_private) | A list of existing pricate route tables. | `list(string)` | `null` | no |
-| <a name="input_existing_route_table_public"></a> [existing\_route\_table\_public](#input\_existing\_route\_table\_public) | A list of existing public route tables. | `list(string)` | `null` | no |
 | <a name="input_existing_vpc_id"></a> [existing\_vpc\_id](#input\_existing\_vpc\_id) | The existing VPC ID. | `string` | `true` | no |
 | <a name="input_path_to_app_dir"></a> [path\_to\_app\_dir](#input\_path\_to\_app\_dir) | The path to the directory that contains all assets for your Streamlit project. Any changes made to this directory will trigger the Docker image to be rebuilt and pushed to ECR during subsequent applies. | `string` | `null` | no |
 | <a name="input_path_to_build_spec"></a> [path\_to\_build\_spec](#input\_path\_to\_build\_spec) | The path to the build spec file for CodeBuild. This file should be a YAML file that defines the build process. | `string` | `null` | no |

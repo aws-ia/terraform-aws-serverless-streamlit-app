@@ -10,13 +10,11 @@ module "serverless-streamlit-app" {
   create_vpc_resources      = false
   create_alb_security_group = false
   create_ecs_security_group = false
-
+  
   # Reference your own existing VPC resources, Security Groups, and IAM Roles/Policies
-  existing_vpc_id              = var.existing_vpc_id
-  existing_alb_subnets         = var.existing_alb_subnets
-  existing_ecs_subnets         = var.existing_ecs_subnets
-  existing_alb_security_groups = var.existing_alb_security_groups
-  existing_ecs_security_groups = var.existing_ecs_security_groups
-  existing_route_table_public  = var.existing_route_table_public
-  existing_route_table_private = var.existing_route_table_private
+  existing_vpc_id              = aws_vpc.sample_existing_vpc.id 
+  existing_alb_subnets         = [aws_subnet.sample_existing_public_subnet1.id, aws_subnet.sample_existing_public_subnet2.id]
+  existing_ecs_subnets         = [aws_subnet.sample_existing_private_subnet1.id, aws_subnet.sample_existing_private_subnet2.id]
+  existing_alb_security_groups = [aws_security_group.sample_existing_lb_sg.id]
+  existing_ecs_security_groups = [aws_security_group.sample_existing_ecs_sg.id]
 }

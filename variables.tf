@@ -96,16 +96,6 @@ variable "existing_alb_https_listener_cert" {
   type        = string
   default     = null
 }
-variable "existing_route_table_public" {
-  description = "A list of existing public route tables."
-  type        = list(string)
-  default     = null
-}
-variable "existing_route_table_private" {
-  description = "A list of existing pricate route tables."
-  type        = list(string)
-  default     = null
-}
 
 # - CloudFront -
 variable "custom_header_name" {

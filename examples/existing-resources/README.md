@@ -64,7 +64,9 @@ No requirements.
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 
 ## Modules
 
@@ -74,19 +76,34 @@ No providers.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_eip.sample_existing_eip](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip) | resource |
+| [aws_internet_gateway.sample_existing_igw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
+| [aws_nat_gateway.sample_existing_ngw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway) | resource |
+| [aws_route_table.sample_existing_route_table_private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
+| [aws_route_table.sample_existing_route_table_public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
+| [aws_route_table_association.private_subnet2_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
+| [aws_route_table_association.sample_existing_private_subnet1_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
+| [aws_route_table_association.sample_existing_public_subnet1_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
+| [aws_route_table_association.sample_existing_public_subnet2_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
+| [aws_security_group.sample_existing_ecs_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group.sample_existing_lb_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_subnet.sample_existing_private_subnet1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
+| [aws_subnet.sample_existing_private_subnet2](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
+| [aws_subnet.sample_existing_public_subnet1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
+| [aws_subnet.sample_existing_public_subnet2](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
+| [aws_vpc.sample_existing_vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_existing_alb_security_groups"></a> [existing\_alb\_security\_groups](#input\_existing\_alb\_security\_groups) | A list of existing security group IDs to attach to the Streamlit ECS service load balancer. | `list(string)` | `null` | no |
-| <a name="input_existing_alb_subnets"></a> [existing\_alb\_subnets](#input\_existing\_alb\_subnets) | A list of existing subnets to launch the ALB in. Public subnets are recommended. | `list(string)` | `null` | no |
-| <a name="input_existing_ecs_security_groups"></a> [existing\_ecs\_security\_groups](#input\_existing\_ecs\_security\_groups) | A list of existing security group IDs to attach to the Streamlit ECS service. | `list(string)` | `null` | no |
-| <a name="input_existing_ecs_subnets"></a> [existing\_ecs\_subnets](#input\_existing\_ecs\_subnets) | A list of existing subnets to launch the ECS service in. Private subnets are recommended. | `list(string)` | `null` | no |
-| <a name="input_existing_route_table_private"></a> [existing\_route\_table\_private](#input\_existing\_route\_table\_private) | A list of existing private route tables. | `list(string)` | `null` | no |
-| <a name="input_existing_route_table_public"></a> [existing\_route\_table\_public](#input\_existing\_route\_table\_public) | A list of existing public route tables. | `list(string)` | `null` | no |
-| <a name="input_existing_vpc_id"></a> [existing\_vpc\_id](#input\_existing\_vpc\_id) | Existing VPC ID to launch the Streamlit ECS service in. | `string` | `null` | no |
+| <a name="input_app_name"></a> [app\_name](#input\_app\_name) | n/a | `string` | `"sample-existing"` | no |
+| <a name="input_container_port"></a> [container\_port](#input\_container\_port) | The port number for the ECS container. Default is 8501 (Streamlit default port). | `number` | `8501` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources. | `map(any)` | <pre>{<br>  "IAC_PROVIDER": "Terraform"<br>}</pre> | no |
 
 ## Outputs
 
