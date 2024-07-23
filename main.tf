@@ -656,6 +656,9 @@ resource "aws_ecs_task_definition" "streamlit_ecs_task_definition" {
     Name        = "${var.app_name}-ecs-task"
     Environment = var.environment
   }
+   triggers = {
+    redeployment = plantimestamp()
+  }
 
 }
 
