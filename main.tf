@@ -576,6 +576,10 @@ resource "aws_ecs_service" "streamlit_ecs_service" {
   task_definition = aws_ecs_task_definition.streamlit_ecs_task_definition.arn
   desired_count   = var.desired_count # Number of tasks to run
   launch_type     = "FARGATE"
+  force_new_deployment = true
+  triggers = {
+    redeployment = plantimestamp()
+  }
 
   network_configuration {
     subnets         = var.existing_ecs_subnets != null ? var.existing_ecs_subnets : [aws_subnet.private_subnet1[0].id, aws_subnet.private_subnet2[0].id]
@@ -655,9 +659,6 @@ resource "aws_ecs_task_definition" "streamlit_ecs_task_definition" {
   tags = {
     Name        = "${var.app_name}-ecs-task"
     Environment = var.environment
-  }
-   triggers = {
-    redeployment = plantimestamp()
   }
 
 }
