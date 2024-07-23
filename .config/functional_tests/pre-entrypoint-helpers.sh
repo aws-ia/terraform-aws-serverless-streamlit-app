@@ -16,3 +16,5 @@ export AWS_DEFAULT_REGION=us-east-1
 #********** ABP Local Storage *************
 mkdir -p ~/dev/aws-ia/.aws
 mkdir -p ~/dev/aws-ia/artifacts
+
+aws sts get-caller-identity
