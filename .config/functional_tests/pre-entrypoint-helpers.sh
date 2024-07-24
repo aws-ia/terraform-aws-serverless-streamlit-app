@@ -12,9 +12,7 @@ cd ${PROJECT_PATH}
 
 #********** AWS Region Export *************
 export AWS_DEFAULT_REGION=us-east-1
-export TF_LOG="DEBUG"
+# export TF_LOG="DEBUG"
 #********** ABP Local Storage *************
 mkdir -p ~/dev/aws-ia/.aws
 mkdir -p ~/dev/aws-ia/artifacts
-
-aws sts get-caller-identity
