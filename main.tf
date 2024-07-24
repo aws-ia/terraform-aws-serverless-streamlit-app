@@ -673,7 +673,7 @@ resource "aws_ecs_task_definition" "streamlit_ecs_task_definition" {
     Environment = var.environment
   }
 
-  depends_on = [ aws_s3_object.streamlit_assets ]
+  depends_on = [ data.aws_s3_object.streamlit_assets ]
 
 }
 
