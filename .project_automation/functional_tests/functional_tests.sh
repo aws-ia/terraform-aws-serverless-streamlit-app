@@ -15,7 +15,7 @@ MANDATORY_TEST_PATH="./tests/01_mandatory.tftest.hcl"
 if test -f ${MANDATORY_TEST_PATH}; then
     echo "File ${MANDATORY_TEST_PATH} is found, resuming test"
     # Run Terraform test
-    terraform init
+    terraform init -upgrade
     terraform test
 else
     echo "File ${MANDATORY_TEST_PATH} not found. You must include at least one test run in file ${MANDATORY_TEST_PATH}"
