@@ -62,6 +62,7 @@ See the `CONTRIBUTING.md` file for information on how to contribute.
 | <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 0.24.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.1.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.1.0 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.6 |
 
 ## Providers
 
@@ -71,6 +72,7 @@ See the `CONTRIBUTING.md` file for information on how to contribute.
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | >= 3.1.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.1.0 |
+| <a name="provider_time"></a> [time](#provider\_time) | ~> 0.6 |
 
 ## Modules
 
@@ -145,6 +147,7 @@ No modules.
 | [null_resource.put_s3_object](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.streamlit_cloudfront_invalidation](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [random_string.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [time_sleep.wait_20_seconds](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [archive_file.streamlit_assets](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
