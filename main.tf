@@ -590,7 +590,7 @@ resource "aws_ecs_service" "streamlit_ecs_service" {
   launch_type     = "FARGATE"
   force_new_deployment = true
   triggers = {
-    redeployment = plantimestamp()
+    update = timestamp()
   }
 
   network_configuration {
