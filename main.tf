@@ -9,6 +9,18 @@ resource "random_string" "streamlit_s3_bucket" {
 }
 
 ################################################################################
+# sleep
+################################################################################
+# - Sleep to avoid eventual consistency  -
+resource "time_sleep" "wait_20_seconds" {
+  depends_on = [
+                aws_s3_bucket.streamlit_s3_bucket, 
+                null_resource.put_s3_object]
+
+  create_duration = "20s"
+}
+
+################################################################################
 # VPC
 ################################################################################
 # Create VPC to host the ECS app

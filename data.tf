@@ -28,6 +28,7 @@ data "aws_s3_object" "streamlit_assets" {
   key    = "${var.app_name}-assets.zip"
 
   depends_on = [
+    time_sleep.wait_20_seconds,
     aws_s3_bucket.streamlit_s3_bucket,
     null_resource.put_s3_object,
     aws_s3_bucket_policy.streamlit_s3_bucket,
