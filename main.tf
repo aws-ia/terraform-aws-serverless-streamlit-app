@@ -369,6 +369,7 @@ resource "aws_vpc_security_group_egress_rule" "streamlit_alb_sg_alb_all_traffic"
 ################################################################################
 # Create ALB
 resource "aws_lb" "streamlit_alb" {
+  count = 1
   name                       = "${var.app_name}-alb"
   internal                   = false
   load_balancer_type         = "application"
