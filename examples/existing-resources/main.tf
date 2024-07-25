@@ -10,8 +10,6 @@ module "serverless-streamlit-app" {
   create_vpc_resources      = false
   create_alb_security_group = false
   create_ecs_security_group = false
-  create_ecs_default_role   = false
-  create_ecs_default_policy = false
   
   # Reference your own existing VPC resources, Security Groups, and IAM Roles/Policies
   existing_vpc_id              = aws_vpc.sample_existing_vpc.id 
