@@ -369,7 +369,6 @@ resource "aws_vpc_security_group_egress_rule" "streamlit_alb_sg_alb_all_traffic"
 ################################################################################
 # Create ALB
 resource "aws_lb" "streamlit_alb" {
-  count = 1
   name                       = "${var.app_name}-alb"
   internal                   = false
   load_balancer_type         = "application"
@@ -411,7 +410,7 @@ resource "aws_lb_target_group" "streamlit_tg" {
 # HTTP Listener
 resource "aws_lb_listener" "http" {
   count             = var.enable_alb_http_listener ? 1 : 0
-  load_balancer_arn = aws_lb.streamlit_alb[0].arn
+  load_balancer_arn = aws_lb.streamlit_alb.arn
   port              = 80
   protocol          = "HTTP"
   # ssl_policy cannot be specified for HTTP listeners.
@@ -424,7 +423,7 @@ resource "aws_lb_listener" "http" {
 # HTTPS Listener
 resource "aws_lb_listener" "https" {
   count             = var.enable_alb_https_listener ? 1 : 0
-  load_balancer_arn = aws_lb.streamlit_alb[0].arn
+  load_balancer_arn = aws_lb.streamlit_alb.arn
   port              = 443
   protocol          = "HTTPS"
   # Create load balancer policy that defaults to predefined AWS Policy 'ELBSecurityPolicy-TLS13-1-2-2021-06'. This policy includes TLS 1.3 and is backwards compatible with TLS 1.2.
@@ -492,7 +491,7 @@ resource "aws_lb_listener_rule" "redirect_rule" {
 # Create CloudFront distribution
 resource "aws_cloudfront_distribution" "streamlit_distribution" {
   origin {
-    domain_name = aws_lb.streamlit_alb[0].dns_name
+    domain_name = aws_lb.streamlit_alb.dns_name
     origin_id   = "${var.app_name}-origin"
 
     custom_header {
