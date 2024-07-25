@@ -369,8 +369,6 @@ resource "aws_vpc_security_group_egress_rule" "streamlit_alb_sg_alb_all_traffic"
 ################################################################################
 # Create ALB
 resource "aws_lb" "streamlit_alb" {
-  count = 1 
-
   name                       = "${var.app_name}-alb"
   internal                   = false
   load_balancer_type         = "application"
@@ -588,11 +586,7 @@ resource "aws_ecs_service" "streamlit_ecs_service" {
   task_definition = aws_ecs_task_definition.streamlit_ecs_task_definition.arn
   desired_count   = var.desired_count # Number of tasks to run
   launch_type     = "FARGATE"
-  force_new_deployment = true
-  triggers = {
-    redeployment = timestamp()
-  }
-
+  
   network_configuration {
     subnets         = var.existing_ecs_subnets != null ? var.existing_ecs_subnets : [aws_subnet.private_subnet1[0].id, aws_subnet.private_subnet2[0].id]
     security_groups = var.existing_ecs_security_groups != null ? var.existing_ecs_security_groups : [aws_security_group.streamlit_ecs_sg[0].id]
@@ -1116,7 +1110,7 @@ data "aws_iam_policy_document" "codebuild_trust_relationship" {
 }
 # ECS - Tasks
 data "aws_iam_policy_document" "ecs_tasks_trust_relationship" {
-  count = 1 
+  count = var.create_ecs_default_role ? 1 : 0 
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -1285,7 +1279,7 @@ resource "aws_iam_policy" "streamlit_codebuild_policy" {
 }
 # ECS Default Policy
 data "aws_iam_policy_document" "ecs_default_policy" {
-  count = 1 
+  count = var.create_ecs_default_policy ? 1 : 0
   # ECR Allow
   statement {
     effect = "Allow"
@@ -1312,7 +1306,7 @@ data "aws_iam_policy_document" "ecs_default_policy" {
   }
 }
 resource "aws_iam_policy" "ecs_default_policy" {
-  count = 1 
+  count = var.create_ecs_default_policy ? 1 : 0 
   name        = "${var.app_name}-ecs-default-policy"
   description = "Policy granting permissions for ECS to ECR and CloudWatch."
   policy      = data.aws_iam_policy_document.ecs_default_policy[0].json
@@ -1390,10 +1384,10 @@ resource "aws_iam_role" "streamlit_codebuild_service_role" {
 
 # ECS
 resource "aws_iam_role" "ecs_default_role" {
-  count = 1 
+  count = var.create_ecs_default_role ? 1 : 0
   name                  = "${var.app_name}-ecs-default-role"
   assume_role_policy    = data.aws_iam_policy_document.ecs_tasks_trust_relationship[0].json
-  force_detach_policies = var.enable_force_detach_policies
+  force_detach_policies = var.enable_force_detach_policies  
 
   managed_policy_arns = [
     aws_iam_policy.ecs_default_policy[0].arn

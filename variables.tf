@@ -272,7 +272,16 @@ variable "existing_ecs_role" {
   type        = string
   default     = null
 }
-
+variable "create_ecs_default_role" {
+  description = "Whether to create a default ECS role for the cluster."
+  type        = bool
+  default     = true
+}
+variable "create_ecs_default_policy" {
+  description = "Whether to create a default ECS policy for the cluster."
+  type        = bool
+  default     = true
+}
 
 # - CloudWatch -
 variable "streamlit_ecs_service_log_group_kms_key" {
