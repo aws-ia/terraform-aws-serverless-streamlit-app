@@ -9,6 +9,18 @@ resource "random_string" "streamlit_s3_bucket" {
 }
 
 ################################################################################
+# sleep
+################################################################################
+# - Sleep to avoid eventual consistency  -
+resource "time_sleep" "wait_20_seconds" {
+  depends_on = [
+                aws_s3_bucket.streamlit_s3_bucket, 
+                null_resource.put_s3_object]
+
+  create_duration = "20s"
+}
+
+################################################################################
 # VPC
 ################################################################################
 # Create VPC to host the ECS app
@@ -32,7 +44,7 @@ resource "aws_vpc" "streamlit_vpc" {
 resource "aws_subnet" "public_subnet1" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = aws_vpc.streamlit_vpc[0].id
+  vpc_id            = aws_vpc.streamlit_vpc[0].id 
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 0)
   availability_zone = data.aws_availability_zones.available.names[0] # first az
 
@@ -46,7 +58,7 @@ resource "aws_subnet" "public_subnet1" {
 resource "aws_subnet" "public_subnet2" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = aws_vpc.streamlit_vpc[0].id
+  vpc_id            = aws_vpc.streamlit_vpc[0].id 
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 1)
   availability_zone = data.aws_availability_zones.available.names[1] # second az
 
@@ -61,7 +73,7 @@ resource "aws_subnet" "public_subnet2" {
 resource "aws_subnet" "private_subnet1" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = aws_vpc.streamlit_vpc[0].id
+  vpc_id            = aws_vpc.streamlit_vpc[0].id 
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 2)
   availability_zone = data.aws_availability_zones.available.names[0] # first az
 
@@ -75,7 +87,7 @@ resource "aws_subnet" "private_subnet1" {
 resource "aws_subnet" "private_subnet2" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = aws_vpc.streamlit_vpc[0].id
+  vpc_id            = aws_vpc.streamlit_vpc[0].id 
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 3)
   availability_zone = data.aws_availability_zones.available.names[1] # second az
 
@@ -91,7 +103,7 @@ resource "aws_subnet" "private_subnet2" {
 resource "aws_internet_gateway" "streamlit_igw" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id = aws_vpc.streamlit_vpc[0].id
+  vpc_id = aws_vpc.streamlit_vpc[0].id 
 
   tags = merge(
     var.tags,
@@ -106,7 +118,7 @@ resource "aws_nat_gateway" "streamlit_ngw" {
   count = var.create_vpc_resources ? 1 : 0
 
   allocation_id = aws_eip.streamlit_eip[0].id
-  subnet_id     = aws_subnet.public_subnet1[0].id
+  subnet_id     = aws_subnet.public_subnet1[0].id 
 
   tags = merge(
     var.tags,
@@ -136,7 +148,7 @@ resource "aws_eip" "streamlit_eip" {
 resource "aws_route_table" "streamlit_route_table_public" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id = aws_vpc.streamlit_vpc[0].id
+  vpc_id = aws_vpc.streamlit_vpc[0].id 
 
   # Create route to IGW for all traffic that is not destined for local
   # NOTE: Most specific route wins, so traffic destined for '10.0.0.0/16' is routed locally. All other traffic ('0.0.0.0/0') is routed to IGW.
@@ -178,22 +190,27 @@ resource "aws_route_table" "streamlit_route_table_private" {
 resource "aws_route_table_association" "public_subnet1_association" {
   count = var.create_vpc_resources ? 1 : 0
 
-  subnet_id      = aws_subnet.public_subnet1[0].id
-  route_table_id = aws_route_table.streamlit_route_table_public[0].id
+  subnet_id      = aws_subnet.public_subnet1[0].id 
+  route_table_id = aws_route_table.streamlit_route_table_public[0].id 
 }
 resource "aws_route_table_association" "public_subnet2_association" {
-  subnet_id      = aws_subnet.public_subnet2[0].id
-  route_table_id = aws_route_table.streamlit_route_table_public[0].id
+  count = var.create_vpc_resources ? 1 : 0
+  subnet_id      =  aws_subnet.public_subnet2[0].id 
+  route_table_id =  aws_route_table.streamlit_route_table_public[0].id 
 }
 
 # Associate the private subnets with the route table and NAT Gateway
 resource "aws_route_table_association" "private_subnet1_association" {
-  subnet_id      = aws_subnet.private_subnet1[0].id
-  route_table_id = aws_route_table.streamlit_route_table_private[0].id
+  count = var.create_vpc_resources ? 1 : 0
+
+  subnet_id      = aws_subnet.private_subnet1[0].id 
+  route_table_id = aws_route_table.streamlit_route_table_private[0].id 
 }
 resource "aws_route_table_association" "private_subnet2_association" {
-  subnet_id      = aws_subnet.private_subnet2[0].id
-  route_table_id = aws_route_table.streamlit_route_table_private[0].id
+  count = var.create_vpc_resources ? 1 : 0
+
+  subnet_id      = aws_subnet.private_subnet2[0].id 
+  route_table_id = aws_route_table.streamlit_route_table_private[0].id 
 }
 
 
@@ -205,7 +222,7 @@ resource "aws_security_group" "streamlit_ecs_sg" {
   count = var.create_ecs_security_group ? 1 : 0
 
   name        = "${var.app_name}-ecs-sg"
-  vpc_id      = aws_vpc.streamlit_vpc[0].id
+  vpc_id      = aws_vpc.streamlit_vpc[0].id 
   description = "Security group for Streamlit ECS container."
 
   tags = {
@@ -278,7 +295,7 @@ resource "aws_security_group" "streamlit_alb_sg" {
   count = var.create_alb_security_group ? 1 : 0
 
   name        = "${var.app_name}-alb-sg"
-  vpc_id      = aws_vpc.streamlit_vpc[0].id
+  vpc_id      = aws_vpc.streamlit_vpc[0].id 
   description = "Security group for Streamlit ALB."
 
   tags = {
@@ -352,8 +369,6 @@ resource "aws_vpc_security_group_egress_rule" "streamlit_alb_sg_alb_all_traffic"
 ################################################################################
 # Create ALB
 resource "aws_lb" "streamlit_alb" {
-  count = var.create_vpc_resources ? 1 : 0
-
   name                       = "${var.app_name}-alb"
   internal                   = false
   load_balancer_type         = "application"
@@ -374,7 +389,7 @@ resource "aws_lb_target_group" "streamlit_tg" {
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = aws_vpc.streamlit_vpc[0].id
+  vpc_id      = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
   health_check {
     path                = "/healthz"
     interval            = 30
@@ -395,7 +410,7 @@ resource "aws_lb_target_group" "streamlit_tg" {
 # HTTP Listener
 resource "aws_lb_listener" "http" {
   count             = var.enable_alb_http_listener ? 1 : 0
-  load_balancer_arn = aws_lb.streamlit_alb[0].arn
+  load_balancer_arn = aws_lb.streamlit_alb.arn
   port              = 80
   protocol          = "HTTP"
   # ssl_policy cannot be specified for HTTP listeners.
@@ -408,7 +423,7 @@ resource "aws_lb_listener" "http" {
 # HTTPS Listener
 resource "aws_lb_listener" "https" {
   count             = var.enable_alb_https_listener ? 1 : 0
-  load_balancer_arn = aws_lb.streamlit_alb[0].arn
+  load_balancer_arn = aws_lb.streamlit_alb.arn
   port              = 443
   protocol          = "HTTPS"
   # Create load balancer policy that defaults to predefined AWS Policy 'ELBSecurityPolicy-TLS13-1-2-2021-06'. This policy includes TLS 1.3 and is backwards compatible with TLS 1.2.
@@ -476,7 +491,7 @@ resource "aws_lb_listener_rule" "redirect_rule" {
 # Create CloudFront distribution
 resource "aws_cloudfront_distribution" "streamlit_distribution" {
   origin {
-    domain_name = aws_lb.streamlit_alb[0].dns_name
+    domain_name = aws_lb.streamlit_alb.dns_name
     origin_id   = "${var.app_name}-origin"
 
     custom_header {
@@ -571,7 +586,7 @@ resource "aws_ecs_service" "streamlit_ecs_service" {
   task_definition = aws_ecs_task_definition.streamlit_ecs_task_definition.arn
   desired_count   = var.desired_count # Number of tasks to run
   launch_type     = "FARGATE"
-
+  
   network_configuration {
     subnets         = var.existing_ecs_subnets != null ? var.existing_ecs_subnets : [aws_subnet.private_subnet1[0].id, aws_subnet.private_subnet2[0].id]
     security_groups = var.existing_ecs_security_groups != null ? var.existing_ecs_security_groups : [aws_security_group.streamlit_ecs_sg[0].id]
@@ -652,6 +667,8 @@ resource "aws_ecs_task_definition" "streamlit_ecs_task_definition" {
     Environment = var.environment
   }
 
+  depends_on = [ data.aws_s3_object.streamlit_assets ]
+
 }
 
 
@@ -697,7 +714,6 @@ resource "aws_ecr_lifecycle_policy" "streamlit_ecr_repo" {
 # }
 data "archive_file" "streamlit_assets" {
   type = "zip"
-  # source_dir  = "${path.module}/../app/"
   source_dir  = var.path_to_app_dir != null ? var.path_to_app_dir : "${path.root}/app/"
   output_path = "${var.app_name}-assets.zip"
 }
@@ -1094,7 +1110,7 @@ data "aws_iam_policy_document" "codebuild_trust_relationship" {
 }
 # ECS - Tasks
 data "aws_iam_policy_document" "ecs_tasks_trust_relationship" {
-  count = var.create_ecs_default_role ? 1 : 0
+  count = var.create_ecs_default_role ? 1 : 0 
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -1290,8 +1306,7 @@ data "aws_iam_policy_document" "ecs_default_policy" {
   }
 }
 resource "aws_iam_policy" "ecs_default_policy" {
-  count = var.create_ecs_default_policy ? 1 : 0
-
+  count = var.create_ecs_default_policy ? 1 : 0 
   name        = "${var.app_name}-ecs-default-policy"
   description = "Policy granting permissions for ECS to ECR and CloudWatch."
   policy      = data.aws_iam_policy_document.ecs_default_policy[0].json
@@ -1370,10 +1385,9 @@ resource "aws_iam_role" "streamlit_codebuild_service_role" {
 # ECS
 resource "aws_iam_role" "ecs_default_role" {
   count = var.create_ecs_default_role ? 1 : 0
-
   name                  = "${var.app_name}-ecs-default-role"
   assume_role_policy    = data.aws_iam_policy_document.ecs_tasks_trust_relationship[0].json
-  force_detach_policies = var.enable_force_detach_policies
+  force_detach_policies = var.enable_force_detach_policies  
 
   managed_policy_arns = [
     aws_iam_policy.ecs_default_policy[0].arn
@@ -1400,5 +1414,3 @@ resource "aws_iam_role" "ecs_task_execution_role" {
     },
   )
 }
-
-

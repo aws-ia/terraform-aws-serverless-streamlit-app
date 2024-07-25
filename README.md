@@ -58,19 +58,21 @@ See the `CONTRIBUTING.md` file for information on how to contribute.
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.7 |
 | <a name="requirement_archive"></a> [archive](#requirement\_archive) | >= 2.2.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | = 5.58.0 |
 | <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 0.24.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.1.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.1.0 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.6 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_archive"></a> [archive](#provider\_archive) | >= 2.2.0 |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | = 5.58.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | >= 3.1.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.1.0 |
+| <a name="provider_time"></a> [time](#provider\_time) | ~> 0.6 |
 
 ## Modules
 
@@ -80,86 +82,87 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_cloudfront_distribution.streamlit_distribution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) | resource |
-| [aws_cloudwatch_event_bus.streamlit_event_bus](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_bus) | resource |
-| [aws_cloudwatch_event_rule.default_event_bus_to_streamlit_event_bus](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
-| [aws_cloudwatch_event_rule.invoke_streamlit_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
-| [aws_cloudwatch_event_target.default_event_bus_to_streamlit_event_bus](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
-| [aws_cloudwatch_event_target.streamlit_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
-| [aws_cloudwatch_log_group.streamlit_ecs_service_log_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
-| [aws_codebuild_project.streamlit_codebuild_project](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
-| [aws_codepipeline.streamlit_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline) | resource |
-| [aws_ecr_lifecycle_policy.streamlit_ecr_repo](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_lifecycle_policy) | resource |
-| [aws_ecr_repository.streamlit_ecr_repo](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository) | resource |
-| [aws_ecs_cluster.streamlit_ecs_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster) | resource |
-| [aws_ecs_cluster_capacity_providers.streamlit_ecs_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster_capacity_providers) | resource |
-| [aws_ecs_service.streamlit_ecs_service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_service) | resource |
-| [aws_ecs_task_definition.streamlit_ecs_task_definition](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition) | resource |
-| [aws_eip.streamlit_eip](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip) | resource |
-| [aws_iam_policy.ecs_default_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_policy.eventbridge_invoke_streamlit_codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_policy.eventbridge_invoke_streamlit_event_bus_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_policy.streamlit_codebuild_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_policy.streamlit_codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_role.ecs_default_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role.ecs_task_execution_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role.eventbridge_invoke_streamlit_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role.eventbridge_invoke_streamlit_event_bus](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role.streamlit_codebuild_service_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role.streamlit_codepipeline_service_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_internet_gateway.streamlit_igw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
-| [aws_lb.streamlit_alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb) | resource |
-| [aws_lb_listener.http](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
-| [aws_lb_listener.https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
-| [aws_lb_listener_certificate.https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_certificate) | resource |
-| [aws_lb_listener_rule.deny_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
-| [aws_lb_listener_rule.redirect_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
-| [aws_lb_target_group.streamlit_tg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
-| [aws_nat_gateway.streamlit_ngw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway) | resource |
-| [aws_route_table.streamlit_route_table_private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
-| [aws_route_table.streamlit_route_table_public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
-| [aws_route_table_association.private_subnet1_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
-| [aws_route_table_association.private_subnet2_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
-| [aws_route_table_association.public_subnet1_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
-| [aws_route_table_association.public_subnet2_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
-| [aws_s3_bucket.streamlit_codepipeline_artifacts](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
-| [aws_s3_bucket.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
-| [aws_s3_bucket_notification.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) | resource |
-| [aws_s3_bucket_policy.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
-| [aws_s3_bucket_versioning.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
-| [aws_security_group.streamlit_alb_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
-| [aws_security_group.streamlit_ecs_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
-| [aws_subnet.private_subnet1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
-| [aws_subnet.private_subnet2](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
-| [aws_subnet.public_subnet1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
-| [aws_subnet.public_subnet2](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
-| [aws_vpc.streamlit_vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
-| [aws_vpc_security_group_egress_rule.streamlit_alb_sg_alb_all_traffic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
-| [aws_vpc_security_group_egress_rule.streamlit_ecs_sg_alb_all_traffic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
-| [aws_vpc_security_group_ingress_rule.streamlit_alb_sg_alb_traffic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
-| [aws_vpc_security_group_ingress_rule.streamlit_alb_sg_http_traffic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
-| [aws_vpc_security_group_ingress_rule.streamlit_alb_sg_https_traffic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
-| [aws_vpc_security_group_ingress_rule.streamlit_ecs_sg_alb_traffic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
-| [aws_vpc_security_group_ingress_rule.streamlit_ecs_sg_http_traffic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
-| [aws_vpc_security_group_ingress_rule.streamlit_ecs_sg_https_traffic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_cloudfront_distribution.streamlit_distribution](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/cloudfront_distribution) | resource |
+| [aws_cloudwatch_event_bus.streamlit_event_bus](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/cloudwatch_event_bus) | resource |
+| [aws_cloudwatch_event_rule.default_event_bus_to_streamlit_event_bus](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/cloudwatch_event_rule) | resource |
+| [aws_cloudwatch_event_rule.invoke_streamlit_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/cloudwatch_event_rule) | resource |
+| [aws_cloudwatch_event_target.default_event_bus_to_streamlit_event_bus](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/cloudwatch_event_target) | resource |
+| [aws_cloudwatch_event_target.streamlit_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/cloudwatch_event_target) | resource |
+| [aws_cloudwatch_log_group.streamlit_ecs_service_log_group](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/cloudwatch_log_group) | resource |
+| [aws_codebuild_project.streamlit_codebuild_project](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/codebuild_project) | resource |
+| [aws_codepipeline.streamlit_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/codepipeline) | resource |
+| [aws_ecr_lifecycle_policy.streamlit_ecr_repo](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/ecr_lifecycle_policy) | resource |
+| [aws_ecr_repository.streamlit_ecr_repo](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/ecr_repository) | resource |
+| [aws_ecs_cluster.streamlit_ecs_cluster](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/ecs_cluster) | resource |
+| [aws_ecs_cluster_capacity_providers.streamlit_ecs_cluster](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/ecs_cluster_capacity_providers) | resource |
+| [aws_ecs_service.streamlit_ecs_service](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/ecs_service) | resource |
+| [aws_ecs_task_definition.streamlit_ecs_task_definition](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/ecs_task_definition) | resource |
+| [aws_eip.streamlit_eip](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/eip) | resource |
+| [aws_iam_policy.ecs_default_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_policy) | resource |
+| [aws_iam_policy.eventbridge_invoke_streamlit_codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_policy) | resource |
+| [aws_iam_policy.eventbridge_invoke_streamlit_event_bus_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_policy) | resource |
+| [aws_iam_policy.streamlit_codebuild_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_policy) | resource |
+| [aws_iam_policy.streamlit_codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_policy) | resource |
+| [aws_iam_role.ecs_default_role](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_role) | resource |
+| [aws_iam_role.ecs_task_execution_role](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_role) | resource |
+| [aws_iam_role.eventbridge_invoke_streamlit_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_role) | resource |
+| [aws_iam_role.eventbridge_invoke_streamlit_event_bus](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_role) | resource |
+| [aws_iam_role.streamlit_codebuild_service_role](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_role) | resource |
+| [aws_iam_role.streamlit_codepipeline_service_role](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/iam_role) | resource |
+| [aws_internet_gateway.streamlit_igw](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/internet_gateway) | resource |
+| [aws_lb.streamlit_alb](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb) | resource |
+| [aws_lb_listener.http](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb_listener) | resource |
+| [aws_lb_listener.https](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb_listener) | resource |
+| [aws_lb_listener_certificate.https](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb_listener_certificate) | resource |
+| [aws_lb_listener_rule.deny_rule](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb_listener_rule) | resource |
+| [aws_lb_listener_rule.redirect_rule](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb_listener_rule) | resource |
+| [aws_lb_target_group.streamlit_tg](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb_target_group) | resource |
+| [aws_nat_gateway.streamlit_ngw](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/nat_gateway) | resource |
+| [aws_route_table.streamlit_route_table_private](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/route_table) | resource |
+| [aws_route_table.streamlit_route_table_public](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/route_table) | resource |
+| [aws_route_table_association.private_subnet1_association](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/route_table_association) | resource |
+| [aws_route_table_association.private_subnet2_association](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/route_table_association) | resource |
+| [aws_route_table_association.public_subnet1_association](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/route_table_association) | resource |
+| [aws_route_table_association.public_subnet2_association](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/route_table_association) | resource |
+| [aws_s3_bucket.streamlit_codepipeline_artifacts](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/s3_bucket) | resource |
+| [aws_s3_bucket.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/s3_bucket) | resource |
+| [aws_s3_bucket_notification.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/s3_bucket_notification) | resource |
+| [aws_s3_bucket_policy.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/s3_bucket_policy) | resource |
+| [aws_s3_bucket_versioning.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/s3_bucket_versioning) | resource |
+| [aws_security_group.streamlit_alb_sg](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/security_group) | resource |
+| [aws_security_group.streamlit_ecs_sg](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/security_group) | resource |
+| [aws_subnet.private_subnet1](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/subnet) | resource |
+| [aws_subnet.private_subnet2](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/subnet) | resource |
+| [aws_subnet.public_subnet1](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/subnet) | resource |
+| [aws_subnet.public_subnet2](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/subnet) | resource |
+| [aws_vpc.streamlit_vpc](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc) | resource |
+| [aws_vpc_security_group_egress_rule.streamlit_alb_sg_alb_all_traffic](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc_security_group_egress_rule) | resource |
+| [aws_vpc_security_group_egress_rule.streamlit_ecs_sg_alb_all_traffic](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc_security_group_egress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.streamlit_alb_sg_alb_traffic](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.streamlit_alb_sg_http_traffic](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.streamlit_alb_sg_https_traffic](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.streamlit_ecs_sg_alb_traffic](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.streamlit_ecs_sg_http_traffic](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.streamlit_ecs_sg_https_traffic](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [null_resource.put_s3_object](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.streamlit_cloudfront_invalidation](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [random_string.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [time_sleep.wait_20_seconds](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [archive_file.streamlit_assets](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
-| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
-| [aws_iam_policy_document.codebuild_trust_relationship](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.codepipeline_trust_relationship](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.ecs_default_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.ecs_tasks_trust_relationship](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.eventbridge_invoke_streamlit_codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.eventbridge_invoke_streamlit_event_bus_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.eventbridge_trust_relationship](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.streamlit_codebuild_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.streamlit_codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
-| [aws_s3_object.streamlit_assets](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_object) | data source |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/availability_zones) | data source |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/caller_identity) | data source |
+| [aws_iam_policy_document.codebuild_trust_relationship](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.codepipeline_trust_relationship](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.ecs_default_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.ecs_tasks_trust_relationship](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.eventbridge_invoke_streamlit_codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.eventbridge_invoke_streamlit_event_bus_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.eventbridge_trust_relationship](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.streamlit_codebuild_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.streamlit_codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/region) | data source |
+| [aws_s3_object.streamlit_assets](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/s3_object) | data source |
 
 ## Inputs
 
@@ -199,6 +202,7 @@ No modules.
 | <a name="input_existing_ecs_role"></a> [existing\_ecs\_role](#input\_existing\_ecs\_role) | The ARN of an existing ECS role to assign to the cluster. | `string` | `null` | no |
 | <a name="input_existing_ecs_security_groups"></a> [existing\_ecs\_security\_groups](#input\_existing\_ecs\_security\_groups) | A list of existing security group IDs to attach to the Streamlit ECS service. | `list(string)` | `null` | no |
 | <a name="input_existing_ecs_subnets"></a> [existing\_ecs\_subnets](#input\_existing\_ecs\_subnets) | A list of existing subnets to launch the ECS service in. Private subnets are recommended. | `list(string)` | `null` | no |
+| <a name="input_existing_vpc_id"></a> [existing\_vpc\_id](#input\_existing\_vpc\_id) | The existing VPC ID. | `string` | `true` | no |
 | <a name="input_path_to_app_dir"></a> [path\_to\_app\_dir](#input\_path\_to\_app\_dir) | The path to the directory that contains all assets for your Streamlit project. Any changes made to this directory will trigger the Docker image to be rebuilt and pushed to ECR during subsequent applies. | `string` | `null` | no |
 | <a name="input_path_to_build_spec"></a> [path\_to\_build\_spec](#input\_path\_to\_build\_spec) | The path to the build spec file for CodeBuild. This file should be a YAML file that defines the build process. | `string` | `null` | no |
 | <a name="input_streamlit_ecr_repo_enable_force_delete"></a> [streamlit\_ecr\_repo\_enable\_force\_delete](#input\_streamlit\_ecr\_repo\_enable\_force\_delete) | Enable force delete on the ECR repo. This allows the destruction of all images in the repository. | `bool` | `true` | no |

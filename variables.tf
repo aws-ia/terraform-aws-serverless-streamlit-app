@@ -36,6 +36,11 @@ variable "create_vpc_resources" {
   type        = bool
   default     = true
 }
+variable "existing_vpc_id" {
+  description = "The existing VPC ID."
+  type        = string
+  default     = true
+}
 variable "existing_alb_security_groups" {
   type        = list(string)
   description = "A list of existing security group IDs to attach to the Streamlit ECS service load balancer."
@@ -256,14 +261,16 @@ variable "codebuild_image_type" {
 }
 
 
-
-
-
 # - IAM -
 variable "enable_force_detach_policies" {
   description = "Enable force detaching any policies from IAM roles."
   type        = bool
   default     = true
+}
+variable "existing_ecs_role" {
+  description = "The ARN of an existing ECS role to assign to the cluster."
+  type        = string
+  default     = null
 }
 variable "create_ecs_default_role" {
   description = "Whether to create a default ECS role for the cluster."
@@ -275,12 +282,6 @@ variable "create_ecs_default_policy" {
   type        = bool
   default     = true
 }
-variable "existing_ecs_role" {
-  description = "The ARN of an existing ECS role to assign to the cluster."
-  type        = string
-  default     = null
-}
-
 
 # - CloudWatch -
 variable "streamlit_ecs_service_log_group_kms_key" {
