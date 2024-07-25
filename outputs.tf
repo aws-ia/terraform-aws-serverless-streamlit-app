@@ -4,7 +4,7 @@ output "streamlit_ecr_repo_image_uri" {
 }
 output "streamlit_alb_dns_name" {
   description = "DNS name of the Streamlit ALB."
-  value       = aws_lb.streamlit_alb[0].dns_name
+  value       = aws_lb.streamlit_alb.dns_name
 }
 
 output "streamlit_cloudfront_distribution_url" {
