@@ -1325,9 +1325,6 @@ resource "aws_iam_role" "eventbridge_invoke_streamlit_event_bus" {
   name                  = "${var.app_name}-eventbridge-invoke-streamlit-event-bus"
   assume_role_policy    = data.aws_iam_policy_document.eventbridge_trust_relationship.json
   force_detach_policies = true
-  managed_policy_arns = [
-    aws_iam_policy.eventbridge_invoke_streamlit_event_bus_policy.arn,
-  ]
   tags = merge(
     var.tags,
     {
@@ -1335,13 +1332,16 @@ resource "aws_iam_role" "eventbridge_invoke_streamlit_event_bus" {
     },
   )
 }
+resource "aws_iam_role_policy_attachments_exclusive" "example" {
+  role_name   = aws_iam_role.eventbridge_invoke_streamlit_event_bus.name
+  policy_arns = [
+    aws_iam_policy.eventbridge_invoke_streamlit_event_bus_policy.arn,
+  ]
+}
 resource "aws_iam_role" "eventbridge_invoke_streamlit_codepipeline" {
   name                  = "${var.app_name}-eventbridge-invoke-streamlit-codepipeline"
   assume_role_policy    = data.aws_iam_policy_document.eventbridge_trust_relationship.json
   force_detach_policies = var.enable_force_detach_policies
-  managed_policy_arns = [
-    aws_iam_policy.eventbridge_invoke_streamlit_codepipeline_policy.arn,
-  ]
   tags = merge(
     var.tags,
     {
@@ -1349,14 +1349,17 @@ resource "aws_iam_role" "eventbridge_invoke_streamlit_codepipeline" {
     },
   )
 }
+resource "aws_iam_role_policy_attachments_exclusive" "example" {
+  role_name   = aws_iam_role.eventbridge_invoke_streamlit_codepipeline.name
+  policy_arns = [
+    aws_iam_policy.eventbridge_invoke_streamlit_codepipeline_policy.arn,
+  ]
+}
 # CodePipeline
 resource "aws_iam_role" "streamlit_codepipeline_service_role" {
   name                  = "${var.app_name}-codepipeline-service-role"
   force_detach_policies = var.enable_force_detach_policies
   assume_role_policy    = data.aws_iam_policy_document.codepipeline_trust_relationship.json
-  managed_policy_arns = [
-    aws_iam_policy.streamlit_codepipeline_policy.arn,
-  ]
   tags = merge(
     var.tags,
     {
@@ -1364,16 +1367,17 @@ resource "aws_iam_role" "streamlit_codepipeline_service_role" {
     },
   )
 }
+resource "aws_iam_role_policy_attachments_exclusive" "example" {
+  role_name   = aws_iam_role.streamlit_codepipeline_service_role.name
+  policy_arns = [
+    aws_iam_policy.streamlit_codepipeline_policy.arn,
+  ]
+}
 # CodeBuild
 resource "aws_iam_role" "streamlit_codebuild_service_role" {
   name                  = "${var.app_name}-codebuild-service-role"
   assume_role_policy    = data.aws_iam_policy_document.codebuild_trust_relationship.json
   force_detach_policies = var.enable_force_detach_policies
-  managed_policy_arns = [
-    aws_iam_policy.streamlit_codebuild_policy.arn,
-    "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
-
-  ]
   tags = merge(
     var.tags,
     {
@@ -1381,7 +1385,13 @@ resource "aws_iam_role" "streamlit_codebuild_service_role" {
     },
   )
 }
-
+resource "aws_iam_role_policy_attachments_exclusive" "example" {
+  role_name   = aws_iam_role.streamlit_codebuild_service_role.name
+  policy_arns = [
+    aws_iam_policy.streamlit_codebuild_policy.arn,
+    "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
+  ]
+}
 # ECS
 resource "aws_iam_role" "ecs_default_role" {
   count = var.create_ecs_default_role ? 1 : 0
@@ -1408,7 +1418,6 @@ resource "aws_iam_role" "ecs_task_execution_role" {
   name = "${var.app_name}-ecs-task-execution-role"
 
   assume_role_policy    = data.aws_iam_policy_document.ecs_tasks_trust_relationship[0].json
-  managed_policy_arns   = ["arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"]
   force_detach_policies = var.enable_force_detach_policies
 
   tags = merge(
@@ -1417,4 +1426,8 @@ resource "aws_iam_role" "ecs_task_execution_role" {
       Name = "${var.app_name}-ecs-task-execution-role"
     },
   )
+}
+resource "aws_iam_role_policy_attachments_exclusive" "example" {
+  role_name   = aws_iam_role.ecs_task_execution_role.name
+  policy_arns   = ["arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"]
 }
