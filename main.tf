@@ -1389,15 +1389,19 @@ resource "aws_iam_role" "ecs_default_role" {
   assume_role_policy    = data.aws_iam_policy_document.ecs_tasks_trust_relationship[0].json
   force_detach_policies = var.enable_force_detach_policies  
 
-  managed_policy_arns = [
-    aws_iam_policy.ecs_default_policy[0].arn
-  ]
   tags = merge(
     var.tags,
     {
       Name = "${var.app_name}-ecs-default-role"
     },
   )
+}
+
+resource "aws_iam_role_policy_attachments_exclusive" "example" {
+  role_name   = aws_iam_role.ecs_default_role.name
+  policy_arns = [
+    aws_iam_policy.ecs_default_policy[0].arn
+  ]
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
