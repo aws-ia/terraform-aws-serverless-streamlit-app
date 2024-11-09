@@ -387,6 +387,7 @@ resource "aws_lb" "streamlit_alb" {
 resource "aws_lb_target_group" "streamlit_tg" {
   name        = "${var.app_name}-tg"
   port        = 80
+  #checkov:skip=CKV_AWS_378:Using HTTP protocol because fronted by CloudFront
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = var.create_vpc_resources ? aws_vpc.streamlit_vpc[0].id : var.existing_vpc_id
@@ -524,7 +525,8 @@ resource "aws_cloudfront_distribution" "streamlit_distribution" {
 
   restrictions {
     geo_restriction {
-      restriction_type = "none"
+      restriction_type = "blacklist"
+      locations = []
     }
   }
 
