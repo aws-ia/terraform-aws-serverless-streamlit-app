@@ -1408,6 +1408,7 @@ resource "aws_iam_role" "ecs_default_role" {
 }
 
 resource "aws_iam_role_policy_attachments_exclusive" "ecs_default_role" {
+  count = var.create_ecs_default_role ? 1 : 0
   role_name   = aws_iam_role.ecs_default_role.name
   policy_arns = [
     aws_iam_policy.ecs_default_policy[0].arn
