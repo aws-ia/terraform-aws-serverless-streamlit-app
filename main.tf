@@ -1332,7 +1332,7 @@ resource "aws_iam_role" "eventbridge_invoke_streamlit_event_bus" {
     },
   )
 }
-resource "aws_iam_role_policy_attachments_exclusive" "example" {
+resource "aws_iam_role_policy_attachments_exclusive" "eventbridge_invoke_streamlit_event_bus" {
   role_name   = aws_iam_role.eventbridge_invoke_streamlit_event_bus.name
   policy_arns = [
     aws_iam_policy.eventbridge_invoke_streamlit_event_bus_policy.arn,
@@ -1349,7 +1349,7 @@ resource "aws_iam_role" "eventbridge_invoke_streamlit_codepipeline" {
     },
   )
 }
-resource "aws_iam_role_policy_attachments_exclusive" "example" {
+resource "aws_iam_role_policy_attachments_exclusive" "eventbridge_invoke_streamlit_codepipeline" {
   role_name   = aws_iam_role.eventbridge_invoke_streamlit_codepipeline.name
   policy_arns = [
     aws_iam_policy.eventbridge_invoke_streamlit_codepipeline_policy.arn,
@@ -1367,7 +1367,7 @@ resource "aws_iam_role" "streamlit_codepipeline_service_role" {
     },
   )
 }
-resource "aws_iam_role_policy_attachments_exclusive" "example" {
+resource "aws_iam_role_policy_attachments_exclusive" "streamlit_codepipeline_service_role" {
   role_name   = aws_iam_role.streamlit_codepipeline_service_role.name
   policy_arns = [
     aws_iam_policy.streamlit_codepipeline_policy.arn,
@@ -1385,7 +1385,7 @@ resource "aws_iam_role" "streamlit_codebuild_service_role" {
     },
   )
 }
-resource "aws_iam_role_policy_attachments_exclusive" "example" {
+resource "aws_iam_role_policy_attachments_exclusive" "streamlit_codebuild_service_role" {
   role_name   = aws_iam_role.streamlit_codebuild_service_role.name
   policy_arns = [
     aws_iam_policy.streamlit_codebuild_policy.arn,
@@ -1407,7 +1407,7 @@ resource "aws_iam_role" "ecs_default_role" {
   )
 }
 
-resource "aws_iam_role_policy_attachments_exclusive" "example" {
+resource "aws_iam_role_policy_attachments_exclusive" "ecs_default_role" {
   role_name   = aws_iam_role.ecs_default_role.name
   policy_arns = [
     aws_iam_policy.ecs_default_policy[0].arn
@@ -1427,7 +1427,7 @@ resource "aws_iam_role" "ecs_task_execution_role" {
     },
   )
 }
-resource "aws_iam_role_policy_attachments_exclusive" "example" {
+resource "aws_iam_role_policy_attachments_exclusive" "ecs_task_execution_role" {
   role_name   = aws_iam_role.ecs_task_execution_role.name
   policy_arns   = ["arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"]
 }
