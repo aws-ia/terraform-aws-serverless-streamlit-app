@@ -634,7 +634,7 @@ resource "aws_ecs_task_definition" "streamlit_ecs_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "${var.app_name}-container",
-      image     = "${aws_ecr_repository.streamlit_ecr_repo.repository_url}:${var.ecs_task_desired_image_tag != null ? var.ecs_task_desired_image_tag : data.aws_s3_object.streamlit_assets.version_id}",
+      image     = "${aws_ecr_repository.streamlit_ecr_repo.repository_url}:${var.ecs_task_desired_image_tag != null ? var.ecs_task_desired_image_tag : "v${data.aws_s3_object.streamlit_assets.version_id}"}",
       cpu       = var.task_cpu    # CPU units for Fargate (must be number, not string)
       memory    = var.task_memory # Memory in MiB for Fargate (must be number, not string)
       essential = true,
@@ -1034,9 +1034,9 @@ resource "aws_codebuild_project" "streamlit_codebuild_project" {
       phases:
         pre_build:
           commands:
-            # Fetch the S3 object version id of the latest version of the app and store as environment variable
+            # Fetch the S3 object version id of the latest version of the app, prepend with "v" and store as environment variable
             - echo Fetching the S3 object version id of the latest version of $APP_NAME...
-            - export LATEST_VERSION_ID=${data.aws_s3_object.streamlit_assets.version_id}
+            - export LATEST_VERSION_ID=v${data.aws_s3_object.streamlit_assets.version_id}
             - echo $LATEST_VERSION_ID
             # Log into Amazon ECR
             - echo Logging in to Amazon ECR...
