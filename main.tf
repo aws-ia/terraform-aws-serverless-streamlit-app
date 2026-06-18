@@ -8,14 +8,32 @@ resource "random_string" "streamlit_s3_bucket" {
   upper   = false
 }
 
+# - Random values for CloudFront-ALB origin verification header -
+resource "random_password" "custom_header_name" {
+  count   = var.custom_header_name == null ? 1 : 0
+  length  = 16
+  special = false
+}
+
+resource "random_password" "custom_header_value" {
+  count   = var.custom_header_value == null ? 1 : 0
+  length  = 32
+  special = false
+}
+
+locals {
+  custom_header_name  = var.custom_header_name != null ? var.custom_header_name : "X-Origin-Verify-${random_password.custom_header_name[0].result}"
+  custom_header_value = var.custom_header_value != null ? var.custom_header_value : random_password.custom_header_value[0].result
+}
+
 ################################################################################
 # sleep
 ################################################################################
 # - Sleep to avoid eventual consistency  -
 resource "time_sleep" "wait_20_seconds" {
   depends_on = [
-                aws_s3_bucket.streamlit_s3_bucket, 
-                null_resource.put_s3_object]
+    aws_s3_bucket.streamlit_s3_bucket,
+  null_resource.put_s3_object]
 
   create_duration = "20s"
 }
@@ -44,7 +62,7 @@ resource "aws_vpc" "streamlit_vpc" {
 resource "aws_subnet" "public_subnet1" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = aws_vpc.streamlit_vpc[0].id 
+  vpc_id            = aws_vpc.streamlit_vpc[0].id
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 0)
   availability_zone = data.aws_availability_zones.available.names[0] # first az
 
@@ -58,7 +76,7 @@ resource "aws_subnet" "public_subnet1" {
 resource "aws_subnet" "public_subnet2" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = aws_vpc.streamlit_vpc[0].id 
+  vpc_id            = aws_vpc.streamlit_vpc[0].id
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 1)
   availability_zone = data.aws_availability_zones.available.names[1] # second az
 
@@ -73,7 +91,7 @@ resource "aws_subnet" "public_subnet2" {
 resource "aws_subnet" "private_subnet1" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = aws_vpc.streamlit_vpc[0].id 
+  vpc_id            = aws_vpc.streamlit_vpc[0].id
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 2)
   availability_zone = data.aws_availability_zones.available.names[0] # first az
 
@@ -87,7 +105,7 @@ resource "aws_subnet" "private_subnet1" {
 resource "aws_subnet" "private_subnet2" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id            = aws_vpc.streamlit_vpc[0].id 
+  vpc_id            = aws_vpc.streamlit_vpc[0].id
   cidr_block        = cidrsubnet(aws_vpc.streamlit_vpc[0].cidr_block, 8, 3)
   availability_zone = data.aws_availability_zones.available.names[1] # second az
 
@@ -103,7 +121,7 @@ resource "aws_subnet" "private_subnet2" {
 resource "aws_internet_gateway" "streamlit_igw" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id = aws_vpc.streamlit_vpc[0].id 
+  vpc_id = aws_vpc.streamlit_vpc[0].id
 
   tags = merge(
     var.tags,
@@ -118,7 +136,7 @@ resource "aws_nat_gateway" "streamlit_ngw" {
   count = var.create_vpc_resources ? 1 : 0
 
   allocation_id = aws_eip.streamlit_eip[0].id
-  subnet_id     = aws_subnet.public_subnet1[0].id 
+  subnet_id     = aws_subnet.public_subnet1[0].id
 
   tags = merge(
     var.tags,
@@ -148,7 +166,7 @@ resource "aws_eip" "streamlit_eip" {
 resource "aws_route_table" "streamlit_route_table_public" {
   count = var.create_vpc_resources ? 1 : 0
 
-  vpc_id = aws_vpc.streamlit_vpc[0].id 
+  vpc_id = aws_vpc.streamlit_vpc[0].id
 
   # Create route to IGW for all traffic that is not destined for local
   # NOTE: Most specific route wins, so traffic destined for '10.0.0.0/16' is routed locally. All other traffic ('0.0.0.0/0') is routed to IGW.
@@ -190,27 +208,27 @@ resource "aws_route_table" "streamlit_route_table_private" {
 resource "aws_route_table_association" "public_subnet1_association" {
   count = var.create_vpc_resources ? 1 : 0
 
-  subnet_id      = aws_subnet.public_subnet1[0].id 
-  route_table_id = aws_route_table.streamlit_route_table_public[0].id 
+  subnet_id      = aws_subnet.public_subnet1[0].id
+  route_table_id = aws_route_table.streamlit_route_table_public[0].id
 }
 resource "aws_route_table_association" "public_subnet2_association" {
-  count = var.create_vpc_resources ? 1 : 0
-  subnet_id      =  aws_subnet.public_subnet2[0].id 
-  route_table_id =  aws_route_table.streamlit_route_table_public[0].id 
+  count          = var.create_vpc_resources ? 1 : 0
+  subnet_id      = aws_subnet.public_subnet2[0].id
+  route_table_id = aws_route_table.streamlit_route_table_public[0].id
 }
 
 # Associate the private subnets with the route table and NAT Gateway
 resource "aws_route_table_association" "private_subnet1_association" {
   count = var.create_vpc_resources ? 1 : 0
 
-  subnet_id      = aws_subnet.private_subnet1[0].id 
-  route_table_id = aws_route_table.streamlit_route_table_private[0].id 
+  subnet_id      = aws_subnet.private_subnet1[0].id
+  route_table_id = aws_route_table.streamlit_route_table_private[0].id
 }
 resource "aws_route_table_association" "private_subnet2_association" {
   count = var.create_vpc_resources ? 1 : 0
 
-  subnet_id      = aws_subnet.private_subnet2[0].id 
-  route_table_id = aws_route_table.streamlit_route_table_private[0].id 
+  subnet_id      = aws_subnet.private_subnet2[0].id
+  route_table_id = aws_route_table.streamlit_route_table_private[0].id
 }
 
 
@@ -222,7 +240,7 @@ resource "aws_security_group" "streamlit_ecs_sg" {
   count = var.create_ecs_security_group ? 1 : 0
 
   name        = "${var.app_name}-ecs-sg"
-  vpc_id      = aws_vpc.streamlit_vpc[0].id 
+  vpc_id      = aws_vpc.streamlit_vpc[0].id
   description = "Security group for Streamlit ECS container."
 
   tags = {
@@ -295,7 +313,7 @@ resource "aws_security_group" "streamlit_alb_sg" {
   count = var.create_alb_security_group ? 1 : 0
 
   name        = "${var.app_name}-alb-sg"
-  vpc_id      = aws_vpc.streamlit_vpc[0].id 
+  vpc_id      = aws_vpc.streamlit_vpc[0].id
   description = "Security group for Streamlit ALB."
 
   tags = {
@@ -454,8 +472,8 @@ resource "aws_lb_listener_rule" "deny_rule" {
 
   condition {
     http_header {
-      http_header_name = var.custom_header_name
-      values           = [var.custom_header_value]
+      http_header_name = local.custom_header_name
+      values           = [local.custom_header_value]
     }
   }
 }
@@ -495,8 +513,8 @@ resource "aws_cloudfront_distribution" "streamlit_distribution" {
     origin_id   = "${var.app_name}-origin"
 
     custom_header {
-      name  = var.custom_header_name
-      value = var.custom_header_value
+      name  = local.custom_header_name
+      value = local.custom_header_value
     }
 
     custom_origin_config {
@@ -586,7 +604,7 @@ resource "aws_ecs_service" "streamlit_ecs_service" {
   task_definition = aws_ecs_task_definition.streamlit_ecs_task_definition.arn
   desired_count   = var.desired_count # Number of tasks to run
   launch_type     = "FARGATE"
-  
+
   network_configuration {
     subnets         = var.existing_ecs_subnets != null ? var.existing_ecs_subnets : [aws_subnet.private_subnet1[0].id, aws_subnet.private_subnet2[0].id]
     security_groups = var.existing_ecs_security_groups != null ? var.existing_ecs_security_groups : [aws_security_group.streamlit_ecs_sg[0].id]
@@ -667,7 +685,7 @@ resource "aws_ecs_task_definition" "streamlit_ecs_task_definition" {
     Environment = var.environment
   }
 
-  depends_on = [ data.aws_s3_object.streamlit_assets ]
+  depends_on = [data.aws_s3_object.streamlit_assets]
 
 }
 
@@ -713,7 +731,7 @@ resource "aws_ecr_lifecycle_policy" "streamlit_ecr_repo" {
 #   output_path = "${var.app_name}-assets.zip"
 # }
 data "archive_file" "streamlit_assets" {
-  type = "zip"
+  type        = "zip"
   source_dir  = var.path_to_app_dir != null ? var.path_to_app_dir : "${path.root}/app/"
   output_path = "${var.app_name}-assets.zip"
 }
@@ -1110,7 +1128,7 @@ data "aws_iam_policy_document" "codebuild_trust_relationship" {
 }
 # ECS - Tasks
 data "aws_iam_policy_document" "ecs_tasks_trust_relationship" {
-  count = var.create_ecs_default_role ? 1 : 0 
+  count = var.create_ecs_default_role ? 1 : 0
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -1306,7 +1324,7 @@ data "aws_iam_policy_document" "ecs_default_policy" {
   }
 }
 resource "aws_iam_policy" "ecs_default_policy" {
-  count = var.create_ecs_default_policy ? 1 : 0 
+  count       = var.create_ecs_default_policy ? 1 : 0
   name        = "${var.app_name}-ecs-default-policy"
   description = "Policy granting permissions for ECS to ECR and CloudWatch."
   policy      = data.aws_iam_policy_document.ecs_default_policy[0].json
@@ -1384,10 +1402,10 @@ resource "aws_iam_role" "streamlit_codebuild_service_role" {
 
 # ECS
 resource "aws_iam_role" "ecs_default_role" {
-  count = var.create_ecs_default_role ? 1 : 0
+  count                 = var.create_ecs_default_role ? 1 : 0
   name                  = "${var.app_name}-ecs-default-role"
   assume_role_policy    = data.aws_iam_policy_document.ecs_tasks_trust_relationship[0].json
-  force_detach_policies = var.enable_force_detach_policies  
+  force_detach_policies = var.enable_force_detach_policies
 
   managed_policy_arns = [
     aws_iam_policy.ecs_default_policy[0].arn

@@ -22,6 +22,18 @@
 
 ## Basic Usage - Simple deployment of sample Streamlit app with default configuration
 
+### Upgrading from v1 to v2 (Breaking Change)
+
+In v2, the `custom_header_name` and `custom_header_value` variables no longer have static default values. To improve security posture, the previous defaults are no longer accepted.
+
+**What changed:**
+- Both variables now default to `null`, which auto-generates secure random values at deploy time.
+- A validation rule blocks the old insecure defaults from being used.
+
+**Upgrade action required:**
+- If you were relying on the old defaults (i.e., not explicitly setting these variables), run `terraform apply` after upgrading. Terraform will regenerate the ALB listener rule and CloudFront origin header with new secure values. Expect a brief interruption while both resources update.
+- If you previously set your own unique values for `custom_header_name` and `custom_header_value`, no action is required.
+
 ### Important
 
 **Note:** The basic deployment will create necessary networking and security services for you with the default values defined in the module variables. If you need to reference existing security and networking resources (VPCs, Subnets, Security Groups, IAM Roles/Policies), please visit review the example for existing resources in the `examples` directory.
@@ -146,6 +158,8 @@ No modules.
 | [aws_vpc_security_group_ingress_rule.streamlit_ecs_sg_https_traffic](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [null_resource.put_s3_object](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.streamlit_cloudfront_invalidation](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [random_password.custom_header_name](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [random_password.custom_header_value](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_string.streamlit_s3_bucket](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [time_sleep.wait_20_seconds](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [archive_file.streamlit_assets](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
@@ -182,8 +196,8 @@ No modules.
 | <a name="input_create_ecs_security_group"></a> [create\_ecs\_security\_group](#input\_create\_ecs\_security\_group) | Whether to create default ECS security group. If this is set to false, you'll need to provide your own list of security group IDs to the `existing_ecs_security_groups` variable. | `bool` | `true` | no |
 | <a name="input_create_streamlit_ecr_repo_lifecycle_policy"></a> [create\_streamlit\_ecr\_repo\_lifecycle\_policy](#input\_create\_streamlit\_ecr\_repo\_lifecycle\_policy) | Conditional creation of ECR Lifecycle policy for the Streamlit ECR repo. Default is to not create any policy. | `bool` | `false` | no |
 | <a name="input_create_vpc_resources"></a> [create\_vpc\_resources](#input\_create\_vpc\_resources) | Whether to create VPC resources. If this is set to `false`, you must provide the relevant ids for your existing resources (e.g VPC, Subnets, Security Groups, etc.) | `bool` | `true` | no |
-| <a name="input_custom_header_name"></a> [custom\_header\_name](#input\_custom\_header\_name) | Name of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Any random string is fine. | `string` | `"X-Verify-Origin"` | no |
-| <a name="input_custom_header_value"></a> [custom\_header\_value](#input\_custom\_header\_value) | Value of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Any random string is fine. | `string` | `"streamlit-CloudFront-Distribution"` | no |
+| <a name="input_custom_header_name"></a> [custom\_header\_name](#input\_custom\_header\_name) | Name of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Must be a unique, non-default value. | `string` | `null` | no |
+| <a name="input_custom_header_value"></a> [custom\_header\_value](#input\_custom\_header\_value) | Value of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Must be a unique, secret value. | `string` | `null` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | The desired number of ECS tasks to run. Default is 1. | `number` | `1` | no |
 | <a name="input_ecs_cpu_architecture"></a> [ecs\_cpu\_architecture](#input\_ecs\_cpu\_architecture) | ECS CPU architecture (x86\_64 or arm64). Acceptable values are 'X86\_64' or 'ARM64' (case-sensistive). | `string` | `"ARM64"` | no |
 | <a name="input_ecs_operating_system_family"></a> [ecs\_operating\_system\_family](#input\_ecs\_operating\_system\_family) | Operating system family (windows or linux) for the ECS task (x86\_64 or arm64). Default is linux. Valid values are listed here: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_RuntimePlatform.html | `string` | `"LINUX"` | no |

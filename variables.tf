@@ -99,15 +99,26 @@ variable "existing_alb_https_listener_cert" {
 
 # - CloudFront -
 variable "custom_header_name" {
-  description = "Name of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Any random string is fine."
+  description = "Name of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Must be a unique, non-default value."
   type        = string
-  default     = "X-Verify-Origin"
+  default     = null
+
+  validation {
+    condition     = var.custom_header_name != "X-Verify-Origin"
+    error_message = "Please provide a unique custom header name, or leave as null to auto-generate a secure value."
+  }
 }
 
 variable "custom_header_value" {
-  description = "Value of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Any random string is fine."
+  description = "Value of the CloudFront custom header. Prevents ALB from accepting requests from other clients than CloudFront. Must be a unique, secret value."
   type        = string
-  default     = "streamlit-CloudFront-Distribution"
+  sensitive   = true
+  default     = null
+
+  validation {
+    condition     = var.custom_header_value != "streamlit-CloudFront-Distribution"
+    error_message = "Please provide a unique secret value, or leave as null to auto-generate a secure value."
+  }
 }
 
 variable "enable_auto_cloudfront_invalidation" {
