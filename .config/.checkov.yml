@@ -18,6 +18,8 @@ skip-check:
 - CKV2_AWS_19 # Ensure that all EIP addresses allocated to a VPC are attached to EC2 instances
 # Suppressed as it is not relevant to this module. Security groups have been scoped down to minimum rules required for module functionality. Further, customers have the ability to reference their own existing networking and security resources.
 - CKV2_AWS_12 # Ensure the default security group of every VPC restricts all traffic
+# Suppressed as ECS tasks and ALBs require unrestricted outbound access for pulling container images, reaching AWS APIs, and general internet connectivity.
+- CKV_AWS_382 # Ensure no security groups allow egress from 0.0.0.0:0 to port -1
 # Suppressed due to an ongoing false-positive issue: https://github.com/bridgecrewio/checkov/issues/1203
 - CKV2_AWS_5 # Ensure that Security Groups are attached to another resource
 
@@ -25,6 +27,8 @@ skip-check:
 # - Application Load Balancer -
 # Suppressed as it is not relevant. This module does not currently support custom SSL certifications, which is a requirement to enable HTTPS for the ALB. Instead, the default CloudFront SSL certificate is used. If there is customer demand, this may be added in a future version of the module.
 - CKV_AWS_2 # Ensure ALB protocol is HTTPS
+# Suppressed as ALB target group uses HTTP for internal VPC traffic between ALB and ECS tasks. TLS termination is handled at the CloudFront and ALB listener layers.
+- CKV_AWS_378 # Ensure AWS Load Balancer doesn't use HTTP protocol
 # Suppressed as this will cause customers to incur additional cost. Will consider adding support for this in future module versions upon customer request.
 - CKV_AWS_91 # Ensure the ELBv2 (Application/Network) has access logging enabled
 # Suppressed as this will cause pipeline failures during functional tests if enabled by default. Customers can conditionally enable this via the 'enable_alb_deletion_protection' variable.
@@ -56,6 +60,8 @@ skip-check:
 # Suppressed as WAFv2 is not currently enabled in this version of the module. This would add additional customer cost, and can be added on top of the module solution leveraging the module outputs.
 - CKV_AWS_68 # CloudFront Distribution should have WAF enabled
 - CKV2_AWS_47 # Ensure AWS CloudFront attached WAFv2 WebACL is configured with AMR for Log4j Vulnerability
+# Suppressed as geo-restriction is a business-level decision that varies by customer. The module does not enforce a default restriction.
+- CKV_AWS_374 # Ensure AWS CloudFront web distribution has geo restriction enabled
 # Suppressed as module does not currently support custom SSL certificates.
 - CKV2_AWS_42 # Ensure AWS CloudFront distribution uses custom SSL certificate
 # Suppressed as it is not supported by the current version of the module. May be added in future module versions upon customer request.
